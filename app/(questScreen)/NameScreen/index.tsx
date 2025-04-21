@@ -3,40 +3,45 @@ import React from 'react'
 import { useSurvey } from '@/hooks/SurveyContext';
 import SpeechBubble from '@/components/questions/SpeechBubble';
 import ThemedButton from '@/components/shared/ThemedButton';
-import ScaleSelector from '@/components/shared/ScaleSlector';
 import ThemedAvatar from '@/components/questions/ThemedAvatar';
+import ThemedView from '@/components/shared/ThemedView';
 
 const NameScreen = () => {
   const { responses, updateResponse } = useSurvey();
 
   return (
-    <View className="p-4">
-      <SpeechBubble text="¿Cómo te llamas?" source="Buno" />
-      <ThemedAvatar source={require('../../../assets/avatars/avatar-14.png')} animate />
+    <ThemedView margin className="flex-1 justify-between">
+      <View className="flex-1 mt-5">
+        <View className="items-center mb-2">
+          <Text className="font-semibold text-lg text-gray-500">1/5</Text>
+          <Text className="text-3xl font-bold text-black">Informacion Peronsal</Text>
+          <Text className="text-base text-gray-400">Completa los campos para poder ayudarte</Text>
+        </View>
 
-      {/* Input para nombre */}
-      <TextInput
-        className="border p-2 rounded-lg my-4"
-        placeholder="Escribe tu nombre"
-        value={responses.nombre}
-        onChangeText={(text) => updateResponse('nombre', text)}
-      />
+        <View className='items-center justify-center flex-1'>
+          <SpeechBubble text="Como dije antes mi nombre es Buno, ¿Cómo te llamas tu?" source="Buno" />
+          <ThemedAvatar source={require('../../../assets/avatars/avatar-14.png')} animate />
 
-      {/* Botón con texto personalizado */}
-      <ThemedButton disabled={responses.nombre === ''}>
-        Continuar
-      </ThemedButton>
+          {/* Input para nombre */}
+          <TextInput
+            className="border p-2 rounded-2xl my-4 w-11/12"
+            placeholder="Escribe tu nombre"
+            value={responses.nombre}
+            onChangeText={(text) => updateResponse('nombre', text)}
+          />
+        </View>
+      </View>
 
-      {/* Ejemplo adicional (por si quieres mantenerlo)
-      <ScaleSelector
-        value={responses.calidadSueno}
-        onValueChange={(value) => updateResponse('calidadSueno', value)}
-        min={1}
-        max={5}
-        leftLabel="Muy poca"
-        rightLabel="Bastante"
-      /> */}
-    </View>
+      {/* Botón con texto personalizado al final de la pantalla */}
+      <View className="mb-5">
+        <ThemedButton 
+          disabled={responses.nombre === ''}
+          route='GenderScreen'
+        >
+          Continuar
+        </ThemedButton>
+      </View>
+    </ThemedView>
   );
 }
 
