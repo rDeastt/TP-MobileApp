@@ -14,7 +14,7 @@ const AgeScreen = () => {
       <View className="flex-1 mt-5">
         <View className="items-center mb-2">
           <Text className="font-semibold text-lg text-gray-500">1/6</Text>
-          <Text className="text-3xl font-bold text-black">Informacion Peronsal</Text>
+          <Text className="text-3xl font-bold text-black">Informacion Personal</Text>
           <Text className="text-base text-gray-400">Completa los campos para poder ayudarte</Text>
         </View>
 
@@ -37,7 +37,7 @@ const AgeScreen = () => {
       <View className="mb-5">
         <ThemedButton 
           disabled={responses.edad === ''}
-          route='GenderScreen'
+          route='MaritalStatusScreen'
         >
           Continuar
         </ThemedButton>
