@@ -27,10 +27,10 @@ const DoubleOptionPicker = ({ option1, option2, selectedValue, onSelect }: Props
       >
         <Image
           source={option.image}
-          className="w-24 h-24 rounded-full"
+          className="w-24 h-24"
           resizeMode="contain"
         />
-        <Text className="text-lg mt-2 text-gray-700 font-semibold">{option.label}</Text>
+        <Text numberOfLines={2} className="text-lg mt-2 text-gray-700 font-semibold text-center max-w-[100px]">{option.label}</Text>
       </Pressable>
     );
   };

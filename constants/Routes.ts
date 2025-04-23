@@ -25,19 +25,9 @@ export const questRoutes: MenuRoute[] = [
 
 
   {
-    title: 'Estado Civil',
-    icon: 'refresh-outline',
-    name: 'MaritalStatusScreen/index',
-  },
-  {
     title: 'Semestre',
     icon: 'refresh-outline',
     name: 'SemesterScreen/index',
-  },
-  {
-    title: 'Financiamiento',
-    icon: 'refresh-outline',
-    name: 'FinancingScreen/index',
   },
   {
     title: 'Situacion Laboral',
@@ -61,27 +51,12 @@ export const questRoutes: MenuRoute[] = [
     icon: 'refresh-outline',
     name: 'ExerciseScreen/index',
   },
-  {
-    title: 'Actividades Extracurriculares',
-    icon: 'refresh-outline',
-    name: 'ExtracurricularScreen/index',
-  },
 
 
   {
     title: 'Comunicacion Familiar',
     icon: 'refresh-outline',
     name: 'FamilyComunicationScreen/index',
-  },
-  {
-    title: 'Apoyo Familiar',
-    icon: 'refresh-outline',
-    name: 'FamilySupportScreen/index',
-  },
-  {
-    title: 'PresionAcademica',
-    icon: 'refresh-outline',
-    name: 'AcademicPresureScreen/index',
   },
 
 
@@ -91,19 +66,9 @@ export const questRoutes: MenuRoute[] = [
     name: 'AcademicLoadScreen/index',
   },
   {
-    title: 'Stisfaccion de la Enseñanza',
-    icon: 'refresh-outline',
-    name: 'TeachingSatisfactionScreen/index',
-  },
-  {
     title: 'Satisfaccion de la recompensas',
     icon: 'refresh-outline',
     name: 'SatisfactionRewardsScreen/index',
-  },
-  {
-    title: 'Capacidad de Exigencias',
-    icon: 'refresh-outline',
-    name: 'CapacityDemandsScreeen/index',
   },
 
 
@@ -128,6 +93,14 @@ export const questRoutes: MenuRoute[] = [
     name: 'ControlEmotionsScreen/index',
   },
 ];
+
+export const Test: MenuRoute[] = [
+  {
+    title: 'TestScreen',
+    icon: 'refresh-outline',
+    name: 'TestScreen/index',
+  },
+]
 
 // export const uiMenuRoutes: MenuRoute[] = [
 //   {

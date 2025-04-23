@@ -5,22 +5,20 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 const initialResponses = {
   nombre: '',
   genero: '',
-  edad: '',
-  estadoCivil: '',
-  semestre: '',
-  financiamiento: '',
-  situacionLaboral: '',
-  fumador: '',
-  responsabilidadesFamiliares: '',
-  horasEjercicio: '',
-  actividadesExtracurriculares: '',
+  edad: 0,
+
+  semestre: 0,
+  situacionLaboral: 0,
+
+  fumador: 0,
+  responsabilidadesFamiliares: 0,
+  horasEjercicio: 0,
+
   comunicacionFamiliar: 0,
-  apoyoFamiliar: 0,
-  presionAcademica: 0,
+
   cargaAcademica: 0,
-  satisfaccionEnsenanza: 0,
   satisfaccionRecompensas: 0,
-  capacidadExigencias: 0,
+
   calidadSueno: 0,
   frecuenciaAnsiedad: 0,
   frecuenciaDepresion: 0,

@@ -1,10 +1,11 @@
-import { View, Text, TextInput } from 'react-native'
+import { View, Text} from 'react-native'
 import React from 'react'
 import { useSurvey } from '@/hooks/SurveyContext';
 import SpeechBubble from '@/components/questions/SpeechBubble';
 import ThemedButton from '@/components/shared/ThemedButton';
 import ThemedAvatar from '@/components/questions/ThemedAvatar';
 import ThemedView from '@/components/shared/ThemedView';
+import ThemedTextInput from '@/components/shared/ThemedTextInput';
 
 const AgeScreen = () => {
   const { responses, updateResponse } = useSurvey();
@@ -18,17 +19,17 @@ const AgeScreen = () => {
           <Text className="text-base text-gray-400">Completa los campos para poder ayudarte</Text>
         </View>
 
-        <View className='items-center justify-center flex-1'>
+        <View className='items-center justify-center flex-1 mb-5'>
           <SpeechBubble text="Acabo de nacer hoy, así que solo tengo unas horas de edad. ¿Y tú? ¿Cuántos años tienes?" source="Buno" />
-          <ThemedAvatar source={require('../../../assets/avatars/avatar-14.png')} animate />
+          <ThemedAvatar source={require('../../../assets/avatars/avatar-3.png')} animate />
 
           {/* Input para nombre */}
-          <TextInput
+          <ThemedTextInput
             className="border border- p-2 rounded-2xl my-4 w-11/12"
             placeholder="Tipea tu edad 👻"
-            value={responses.edad}
+            value={responses.edad.toString()}
             keyboardType='numeric'
-            onChangeText={(text) => updateResponse('edad', text)}
+            onChangeText={(text) => updateResponse('edad', Number(text))}
           />
         </View>
       </View>
@@ -36,8 +37,8 @@ const AgeScreen = () => {
       {/* Botón con texto personalizado al final de la pantalla */}
       <View className="mb-5">
         <ThemedButton 
-          disabled={responses.edad === ''}
-          route='MaritalStatusScreen'
+          disabled={responses.edad === 0}
+          route='SemesterScreen'
         >
           Continuar
         </ThemedButton>

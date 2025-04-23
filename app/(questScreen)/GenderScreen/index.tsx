@@ -21,7 +21,7 @@ const GenderScreen = () => {
 
         <View className='items-center justify-center flex-1'>
           <SpeechBubble text="Ahora dime, eres un chico o una chica?. Si me preguntas a mi soy un imagen asi que no tengo genero xd" source="Buno" />
-          <ThemedAvatar source={require('../../../assets/avatars/avatar-14.png')} animate />
+          <ThemedAvatar source={require('../../../assets/avatars/avatar-2.png')} animate />
 
           {/* Input para nombre */}
           <DoubleOptionPicker

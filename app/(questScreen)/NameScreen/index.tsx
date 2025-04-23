@@ -13,14 +13,14 @@ const NameScreen = () => {
     <ThemedView margin className="flex-1 justify-between">
       <View className="flex-1 mt-5">
         <View className="items-center mb-2">
-          <Text className="font-semibold text-lg text-gray-500">1/5</Text>
-          <Text className="text-3xl font-bold text-black">Informacion Peronsal</Text>
+          <Text className="font-semibold text-lg text-gray-500">1/6</Text>
+          <Text className="text-3xl font-bold text-black">Informacion Personal</Text>
           <Text className="text-base text-gray-400">Completa los campos para poder ayudarte</Text>
         </View>
 
-        <View className='items-center justify-center flex-1'>
+        <View className='items-center justify-center flex-1 pb-10'>
           <SpeechBubble text="Como dije antes mi nombre es Buno, ¿Cómo te llamas tu?" source="Buno" />
-          <ThemedAvatar source={require('../../../assets/avatars/avatar-14.png')} animate />
+          <ThemedAvatar source={require('../../../assets/avatars/avatar-1.png')} animate />
 
           {/* Input para nombre */}
           <TextInput

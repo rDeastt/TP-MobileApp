@@ -31,7 +31,12 @@ const TripleOptionPicker = ({ option1, option2, option3, selectedValue, onSelect
           className="w-20 h-20 rounded-full"
           resizeMode="contain"
         />
-        <Text className="text-base mt-2 text-gray-700 font-semibold">{option.label}</Text>
+        <Text
+          numberOfLines={2}
+          className="text-base mt-2 text-gray-700 font-semibold text-center max-w-[80px]"
+        >
+          {option.label}
+        </Text>      
       </Pressable>
     );
   };

@@ -32,13 +32,13 @@ const ThemedAvatar = ({ source, onPress, animate = false }:Props) => {
     <Pressable onPress={onPress}>
       <View className="items-center justify-center">
         <Animated.View
-          className="w-40 h-40 rounded-full overflow-hidden"
+          className="w-40 h-40 overflow-hidden"
           style={{ transform: [{ scale: scaleAnim }] }}
         >
           <Image
             source={source}
-            className="w-full h-full"
-            resizeMode="cover"
+            className="w-40 h-40"
+            resizeMode="contain"
           />
         </Animated.View>
       </View>

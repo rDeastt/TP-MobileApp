@@ -9,6 +9,8 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 import "../global.css"
 import { SurveyProvider } from '@/hooks/SurveyContext';
+import { Test } from '@/constants/Routes';
+import { StatusBar } from 'react-native';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,7 +34,20 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SurveyProvider>
-          <Stack screenOptions={{headerShown:false}}/>
+        <StatusBar backgroundColor="#F3F3F3" />
+          <Stack screenOptions={{headerShown:false}}>
+                {
+                    Test.map(route =>(
+                        <Stack.Screen
+                        key={route.name}
+                        name={route.name}
+                        options={{
+                            title: route.title
+                          }}
+                        />       
+                    ))
+                }
+          </Stack>
       </SurveyProvider>
     </GestureHandlerRootView>
     
