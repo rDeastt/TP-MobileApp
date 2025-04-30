@@ -10,7 +10,9 @@ const BunnoApp = () => {
 
 
     return (
-      <Redirect href='./NameScreen'/>
+      <Redirect href='./HomeScreen'/>
+      //<Redirect href='./ControlEmotionsScreen'/>
+      //<Redirect href='./NameScreen'/> //este es el que debe estar default
     );
 }
 

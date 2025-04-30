@@ -102,6 +102,38 @@ export const Test: MenuRoute[] = [
   },
 ]
 
+export const Tools: MenuRoute[] = [
+  {
+    title: 'Herramientas',
+    icon: 'square-outline',
+    name: 'ToolsScreen/index',
+  },
+  {
+    title: 'Pomodoro',
+    icon: 'square-outline',
+    name: 'PomodoroScreen/index',
+  },
+  {
+    title: 'Rutina sencilla',
+    icon: 'square-outline',
+    name: 'RoutineScreen/index',
+  },
+  {
+    title: 'Respiración consciente',
+    icon: 'square-outline',
+    name: 'BreatheScreen/index',
+  },
+  {
+    title: 'Mandalas',
+    icon: 'square-outline',
+    name: 'MandalasScreen/index',
+  },
+  {
+    title: 'Meditacion',
+    icon: 'square-outline',
+    name: 'MeditationScreen/index',
+  },
+]
 // export const uiMenuRoutes: MenuRoute[] = [
 //   {
 //     title: 'Switches',
