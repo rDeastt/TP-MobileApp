@@ -124,14 +124,14 @@ export const Tools: MenuRoute[] = [
     name: 'BreatheScreen/index',
   },
   {
-    title: 'Mandalas',
-    icon: 'square-outline',
-    name: 'MandalasScreen/index',
-  },
-  {
     title: 'Meditacion',
     icon: 'square-outline',
     name: 'MeditationScreen/index',
+  },
+  {
+    title: 'Transforma tus Pensamientos',
+    icon: 'square-outline',
+    name: 'ThoughtsScreen/index',
   },
 ]
 // export const uiMenuRoutes: MenuRoute[] = [

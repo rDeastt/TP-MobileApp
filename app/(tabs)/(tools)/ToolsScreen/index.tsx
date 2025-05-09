@@ -2,27 +2,26 @@ import { View, Text, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import ToolCard from '@/components/shared/ToolCard';
 import ThemedView from '@/components/shared/ThemedView';
+import { Href } from 'expo-router';
+import { Tools } from '@/constants/Routes';
 
-const tools = [
-  { name: 'Pomodoro', route: 'PomodoroScreen' },
-  { name: 'Rutina sencilla', route: 'RoutineScreen' },
-  { name: 'Respiración consciente', route: 'BreatheScreen' },
-  { name: 'Mandalas', route: 'MandalasScreen' },
-  { name: 'Meditacion', route: 'MeditationScreen' },
-];
 
 const ToolsScreen = () => {
+
+  const ToolsFilter = Tools.filter((tool) => tool.name !== 'ToolsScreen/index')
+
+
   return (
     <ThemedView margin>
       <Text className="mt-5 text-2xl font-semibold text-gray-900">
         Herramientas
       </Text>
       <ScrollView className='mt-2'>
-      {tools.map((tool) => (
+      {ToolsFilter.map((tool) => (
         <ToolCard
-          key={tool.name}
-          name={tool.name}
-          route={tool.route}
+          key={tool.title}
+          name={tool.title}
+          route={tool.name.split('/')[0]}
         />
       ))}
     </ScrollView>
