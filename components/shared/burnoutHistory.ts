@@ -117,3 +117,28 @@ export const getRiskInfo = async (): Promise<BurnoutLevel> => {
   if (p >= 50)   return 'high';
   return 'moderate';
 };
+
+/* ───── Días desde la última predicción ───── */
+export const getDaysSinceLastPrediction = async (): Promise<number | null> => {
+  const raw = await AsyncStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+
+  const history: HistoryItem[] = JSON.parse(raw);
+  const last = history.at(-1);
+  if (!last) return null;
+
+  const lastDate = new Date(last.date);
+  const diffDays = Math.floor(
+    (Date.now() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  return diffDays;
+};
+
+/* ───── Días restantes para poder repetir (intervalo 7 d) ───── */
+export const getDaysUntilNextPrediction = async (): Promise<number> => {
+  const since = await getDaysSinceLastPrediction();
+  if (since === null) return 0;      // nunca se ha hecho → disponible
+  const remaining = 7 - since;
+  return remaining < 0 ? 0 : remaining;
+};

@@ -1,27 +1,44 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import RecommendationCard from '@/components/shared/RecomendationCard';
 import ThemedView from '@/components/shared/ThemedView';
 import { recommendations as rawRecommendations, colorRecomendationPalette as colorPalette, BurnoutLevel } from '@/constants/recomendations';
 import CardDescription from '@/components/shared/CardDescription';
-import { getRiskInfo } from '@/components/shared/burnoutHistory';
-
+import { clearHistory, getLastProbability, getLastUserName, getRiskInfo } from '@/components/shared/burnoutHistory';
+import LastPredictionCard from '@/components/shared/LastPredictionCard';
 
 const HomeScreen = () => {
-  const [active, setActive] = useState<null | number>(null);
-  const [risk, setRisk] = useState<BurnoutLevel>('moderate');   // valor por defecto
+  const [active, setActive] = useState<number | null>(null);
+  const [risk,   setRisk]   = useState<BurnoutLevel>('moderate');
+  const [percent, setPercent] = useState<number | null>(null);
+  const [name, setName] = useState<string | null>("User");
 
-    /* ── Obtener nivel una sola vez ── */
-    useEffect(() => {
-      (async () => {
-        const level = await getRiskInfo();   // 'low' | 'moderate' | 'high'
-        setRisk(level);
-      })();
-    }, []);
-    const recommendations = rawRecommendations.filter(rec => rec.level === risk);
-    
+  /* Obtener nivel y porcentaje solo una vez */
+  useEffect(() => {
+    (async () => {
+      const [level, p, name] = await Promise.all([getRiskInfo(), getLastProbability(), getLastUserName()]);
+      setRisk(level);
+      setPercent(p);
+      setName(name);
+    })();
+  }, []);
+
+  const recommendations = rawRecommendations.filter((rec) => rec.level === risk);
+
   return (
     <ThemedView>
+      {/* Tarjeta resumen de la última predicción */}
+      <View className="px-4 mt-10 mb-2">
+        <Text className="text-3xl font-bold text-black">Bienvenido {name}</Text>
+        <Text className='my-2'> ✨ Cree en ti mismo y todo será posible ✨</Text>
+        <LastPredictionCard
+          percentage={percent}
+          bgColor='bg-secondary'
+        />
+
+        <Text className="text-3xl font-bold text-black">Tus Recomendaciones</Text>
+      </View>
+
       {/* Tarjetas pequeñas scroll horizontal */}
       <ScrollView
         horizontal
@@ -52,6 +69,15 @@ const HomeScreen = () => {
           onClose={() => setActive(null)}
         />
       )}
+
+      <Pressable
+        onPress={clearHistory}                       // ← imprime en consola
+        className="bg-emerald-500 px-6 py-4 rounded-xl mt-10 w-full items-center"
+      >
+        <Text className="text-white font-semibold text-lg">
+          Ver mis recomendaciones
+        </Text>
+      </Pressable>
     </ThemedView>
   );
 };
