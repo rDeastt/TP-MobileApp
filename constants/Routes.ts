@@ -100,6 +100,11 @@ export const Test: MenuRoute[] = [
     icon: 'refresh-outline',
     name: 'TestScreen/index',
   },
+  {
+    title: 'RecomendationsScreen',
+    icon: 'refresh-outline',
+    name: 'RecomendationsScreen/index',
+  },
 ]
 
 export const Tools: MenuRoute[] = [

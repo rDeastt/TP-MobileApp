@@ -10,14 +10,14 @@ module.exports = {
   theme: {
     extend: {
       colors:{
-        primary: '#4ADF86',
+        main: '#4ADF86',
         secondary:{
           DEFAULT: '#78B4FF',
           100: '#C51297',
           200: '#831266'
         },
-        tertiary: '#EF2967'
-
+        tertiary: '#EF2967',
+        cards: '#D8CFF5'
       },
     },
   },
