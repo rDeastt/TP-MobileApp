@@ -29,7 +29,11 @@ const AgeScreen = () => {
             placeholder="Tipea tu edad 👻"
             value={responses.edad.toString()}
             keyboardType='numeric'
-            onChangeText={(text) => updateResponse('edad', Number(text))}
+              onChangeText={(text) => {
+                /** quita todo lo que no sea dígito */
+                const onlyNums = text.replace(/[^0-9]/g, '');
+                updateResponse('edad', Number(onlyNums));
+              }}
           />
         </View>
       </View>

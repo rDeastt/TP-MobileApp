@@ -24,7 +24,7 @@ const NameScreen = () => {
 
           {/* Input para nombre */}
           <TextInput
-            className="border p-2 rounded-2xl my-4 w-11/12"
+            className="border p-2 rounded-full my-4 w-11/12 bg-white"
             placeholder="Escribe tu nombre"
             value={responses.nombre}
             onChangeText={(text) => updateResponse('nombre', text)}

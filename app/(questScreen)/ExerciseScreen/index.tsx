@@ -29,7 +29,11 @@ const ExerciseScreen = () => {
             placeholder="Escribe las horas"
             value={responses.horasEjercicio.toString()}
             keyboardType='numeric'
-            onChangeText={(text) => updateResponse('horasEjercicio', Number(text))}
+            onChangeText={(text) => {
+              /** quita todo lo que no sea dígito */
+              const onlyNums = text.replace(/[^0-9]/g, '');
+              updateResponse('horasEjercicio', Number(onlyNums));
+            }}            
           />
         </View>
       </View>

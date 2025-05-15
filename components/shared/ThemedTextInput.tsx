@@ -1,23 +1,18 @@
-import { View, Text, TextInput, TextInputProps, KeyboardTypeOptions } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { TextInput, TextInputProps } from 'react-native';
 
 interface Props extends TextInputProps {
-    type?: string;
-    placeholder?: string;
-    value?: string;
-    onChangeText?: (text: string) => void;
+  className?: string; // opcional, si usas NativeWind
 }
 
-const ThemedTextInput = ({type = 'default', placeholder, value, onChangeText}:Props) => {
+const ThemedTextInput = ({ className, keyboardType = 'default', ...rest }: Props) => {
   return (
-        <TextInput
-            className="border border- p-2 rounded-2xl my-4 w-11/12 "
-            placeholder={placeholder}
-            value={value}
-            keyboardType={type as KeyboardTypeOptions}
-            onChangeText={onChangeText}
-        />
-  )
-}
+    <TextInput
+      className={`border p-2 rounded-full my-4 w-11/12 bg-white ${className ?? ''}`}
+      keyboardType={keyboardType} // ← usa el que venga
+      {...rest}                   // ← pasa el resto (placeholder, value, onChangeText, etc.)
+    />
+  );
+};
 
-export default ThemedTextInput
+export default ThemedTextInput;
