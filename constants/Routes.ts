@@ -138,6 +138,11 @@ export const Tools: MenuRoute[] = [
     icon: 'square-outline',
     name: 'ThoughtsScreen/index',
   },
+  {
+    title: 'PausaActiva',
+    icon: 'square-outline',
+    name: 'ActivePauseScreen/index',
+  },
 ]
 // export const uiMenuRoutes: MenuRoute[] = [
 //   {

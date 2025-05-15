@@ -25,7 +25,7 @@ const TestScreen = () => {
       try {
         const { data } = await axios.post(`${url}/predict`, mapped);
         setTimeout(async () => {
-          const prob = data.probabilidad;          // 0-100
+          const prob = data.probabilidad_burnout * 100;          // 0-100
           setResult(prob);
           await saveResult(prob, responses);       // ← guarda fecha, prob y nombre
           setLoading(false);
