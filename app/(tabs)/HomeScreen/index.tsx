@@ -2,10 +2,11 @@ import { View, Text, ScrollView, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import RecommendationCard from '@/components/shared/RecomendationCard';
 import ThemedView from '@/components/shared/ThemedView';
-import { recommendations as rawRecommendations, colorRecomendationPalette as colorPalette, BurnoutLevel } from '@/constants/recomendations';
+import { recommendations as rawRecommendations, BurnoutLevel } from '@/constants/recomendations';
 import CardDescription from '@/components/shared/CardDescription';
 import { clearHistory, getLastProbability, getLastUserName, getRiskInfo } from '@/components/shared/burnoutHistory';
 import LastPredictionCard from '@/components/shared/LastPredictionCard';
+import { colorRecomendationPalette } from '@/constants/Colors';
 
 const HomeScreen = () => {
   const [active, setActive] = useState<number | null>(null);
@@ -23,7 +24,7 @@ const HomeScreen = () => {
     })();
   }, []);
 
-  const recommendations = rawRecommendations.filter((rec) => rec.level === risk);
+  const recs = rawRecommendations.filter((rec) => rec.level === risk);
 
   return (
     <ThemedView>
@@ -40,32 +41,31 @@ const HomeScreen = () => {
       </View>
 
       {/* Tarjetas pequeñas scroll horizontal */}
-      <ScrollView
+      <ScrollView         
         horizontal
         showsHorizontalScrollIndicator={false}
         className="mt-4 px-2"
         contentContainerStyle={{ paddingHorizontal: 4 }}
-      >
-        {recommendations.map((rec, index) => (
+        >
+        {recs.map((rec, idx) => (
           <RecommendationCard
             key={rec.id}
             title={rec.title}
-            iconName={rec.iconName as any}
+            iconName={rec.iconName}
             type="small"
-            onPress={() => setActive(index)}
-            color={colorPalette[index % colorPalette.length]}
+            color={colorRecomendationPalette[idx % colorRecomendationPalette.length]}
+            onPress={() => setActive(idx)}
           />
         ))}
       </ScrollView>
-      
-      {/* Tarjeta modal superpuesta */}
+
       {active !== null && (
         <CardDescription
-          visible={active !== null}
-          title={recommendations[active].title}
-          body={recommendations[active].body}
-          iconName={recommendations[active].iconName}
-          color={colorPalette[active % colorPalette.length]}
+          visible
+          title={recs[active].title}
+          body={recs[active].body}
+          iconName={recs[active].iconName}
+          color={colorRecomendationPalette[active % colorRecomendationPalette.length]}
           onClose={() => setActive(null)}
         />
       )}

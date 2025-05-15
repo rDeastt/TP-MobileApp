@@ -139,7 +139,7 @@ export const Tools: MenuRoute[] = [
     name: 'ThoughtsScreen/index',
   },
   {
-    title: 'PausaActiva',
+    title: 'Pausa Activa',
     icon: 'square-outline',
     name: 'ActivePauseScreen/index',
   },

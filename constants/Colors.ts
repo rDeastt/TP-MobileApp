@@ -32,3 +32,29 @@ export const Colors = {
   //   tabIconSelected: tintColorDark,
   // },
 };
+
+/* Tabla central de colores para tarjetas de recomendación */
+export const backgroundColorMap = {
+  purple:  '#a78bfa', // purple-400
+  sky:     '#0ea5e9', // sky-500
+  teal:    '#14b8a6', // teal-500
+  emerald: '#10b981', // emerald-500
+  pink:    '#f472b6', // pink-400
+  yellow:  '#eab308', // yellow-500
+  indigo:  '#6366f1', // indigo-500
+  orange:  '#f97316', // orange-500
+} as const;
+
+export type ColorKey = keyof typeof backgroundColorMap;
+
+/* Paleta (orden) que usan las pantallas */
+export const colorRecomendationPalette: ColorKey[] = [
+  'purple',
+  'sky',
+  'teal',
+  'emerald',
+  'pink',
+  'yellow',
+  'indigo',
+  'orange',
+];

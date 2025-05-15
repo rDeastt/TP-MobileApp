@@ -2,17 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 export type BurnoutLevel = 'low' | 'moderate' | 'high' | 'error';
 
-export const colorRecomendationPalette = [
-  'bg-purple-400',
-  'bg-sky-500',
-  'bg-teal-500',
-  'bg-emerald-500',
-  'bg-pink-400',
-  'bg-yellow-500',
-  'bg-indigo-500',
-  'bg-orange-500',
-];
-
 export interface Recommendation {
   id: string;
   level: BurnoutLevel;

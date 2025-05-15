@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react'
 import ThemedView from '@/components/shared/ThemedView';
 import CardDescription from '@/components/shared/CardDescription';
 import RecommendationCard from '@/components/shared/RecomendationCard';
-import { recommendations as rawRecommendations, colorRecomendationPalette as colorPalette, BurnoutLevel } from '@/constants/recomendations';
+import { recommendations as rawRecommendations, BurnoutLevel } from '@/constants/recomendations';
 import { getRiskInfo } from '@/components/shared/burnoutHistory';
 import ThemedButton from '@/components/shared/ThemedButton';
+import { colorRecomendationPalette } from '@/constants/Colors';
 
 const RecomendationsScreen = () => {
     const [active, setActive] = useState<null | number>(null);
@@ -26,15 +27,15 @@ const RecomendationsScreen = () => {
         <Text className="text-3xl font-bold text-center mt-4">Recomendaciones</Text>
         {/* Tarjetas grandes */}
         <ScrollView className="mt-4 px-4">
-        {recommendations.map((rec, index) => (
+        {recommendations.map((rec, idx) => (
             <RecommendationCard
             key={rec.id}
             title={rec.title}
             description={rec.summary}
             iconName={rec.iconName as any}
             type="large"
-            color={colorPalette[index % colorPalette.length]}
-            onPress={() => setActive(index)}
+            color={colorRecomendationPalette[idx % colorRecomendationPalette.length]}
+            onPress={() => setActive(idx)}
             />
         ))}
         </ScrollView>
@@ -45,7 +46,7 @@ const RecomendationsScreen = () => {
             title={recommendations[active].title}
             body={recommendations[active].body}
             iconName={recommendations[active].iconName}
-            color={colorPalette[active % colorPalette.length]}
+            color={colorRecomendationPalette[active % colorRecomendationPalette.length]}
             onClose={() => setActive(null)}
         />
         )}

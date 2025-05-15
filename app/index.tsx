@@ -21,7 +21,7 @@ const BunnoApp = () => {
   return percent === null ? (
     <Redirect href="/NameScreen" />
   ) : (
-    <Redirect href="/HomeScreen" /> //HomeScreen
+    <Redirect href="/NameScreen" /> //HomeScreen
   );
 };
 
