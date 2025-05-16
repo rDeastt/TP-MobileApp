@@ -7,8 +7,9 @@ import CardDescription from '@/components/shared/CardDescription';
 import { clearHistory, getLastProbability, getLastUserName, getRiskInfo } from '@/components/shared/burnoutHistory';
 import LastPredictionCard from '@/components/shared/LastPredictionCard';
 import { colorRecomendationPalette } from '@/constants/Colors';
-
+import phrases from '@/constants/motivationalPhrases';
 const HomeScreen = () => {
+  const [phrase, setPhrase] = useState('');
   const [active, setActive] = useState<number | null>(null);
   const [risk,   setRisk]   = useState<BurnoutLevel>('moderate');
   const [percent, setPercent] = useState<number | null>(null);
@@ -24,6 +25,10 @@ const HomeScreen = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    const random = phrases[Math.floor(Math.random() * phrases.length)];
+    setPhrase(random);
+  }, []);
   const recs = rawRecommendations.filter((rec) => rec.level === risk);
 
   return (
@@ -69,7 +74,9 @@ const HomeScreen = () => {
           onClose={() => setActive(null)}
         />
       )}
-
+      <View className="items-center mt-10 mb-6 px-6 ">
+        <Text className="text-center text-gray-600 italic text-xl">{phrase}</Text>
+      </View>
     </ThemedView>
   );
 };

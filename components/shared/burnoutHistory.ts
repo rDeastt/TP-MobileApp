@@ -6,16 +6,27 @@ export const STORAGE_KEY = '@burnout_history';
 /* ---------- Tipos ---------- */
 
 export interface HistoryItem {
-    date: string;
-    probability: number;
-    name: string;
-    responses: Record<string, any>;
-  }
+  date: string;
+  probability: number;
+  name: string;
+  responses: Record<string, any>;
+  factores: {
+    variable: string;
+    valor_usuario: number;
+    impacto_modelo: number;
+  }[];
+}
+
 
 /* ---------- Guardar nuevo resultado ---------- */
 export const saveResult = async (
   probability: number,
   responses: Record<string, any>,
+  factores: {
+    variable: string;
+    valor_usuario: number;
+    impacto_modelo: number;
+  }[]
 ) => {
   try {
     const prev = await AsyncStorage.getItem(STORAGE_KEY);
@@ -26,6 +37,7 @@ export const saveResult = async (
       probability,
       name: responses?.nombre ?? 'Sin-nombre',
       responses,
+      factores,
     });
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(history));

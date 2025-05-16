@@ -29,7 +29,7 @@ const TestScreen = () => {
         setTimeout(async () => {
           const prob = data.probabilidad_burnout * 100;          // 0-100
           setResult(prob);
-          await saveResult(prob, responses);       // ← guarda fecha, prob y nombre
+          await saveResult(prob, responses, data.factores);       // ← guarda fecha, prob y nombre
           setLoading(false);
         }, 3000);
       } catch (err) {
