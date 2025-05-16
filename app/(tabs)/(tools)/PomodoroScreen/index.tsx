@@ -13,8 +13,8 @@ import Tomato from '@/components/pomodoro/Tomato';
 import zap1 from '../../../../assets/sounds/zap1.mp3';
 import zap2 from '../../../../assets/sounds/zap2.mp3';
 
-const WORK_DURATION  = 5; // 20*60 en producción
-const BREAK_DURATION = 3; // 5*60 en producción
+const WORK_DURATION  = 20*60; // 20*60 en producción
+const BREAK_DURATION = 5*60; // 5*60 en producción
 
 /* ------- helper sonido -------- */
 const playSound = async (file: any) => {
