@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "burnout",
-    "slug": "burnout",
+    "name": "Buno Zero",
+    "slug": "Buno-App",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.deastt.BunoApp"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a7642421-51a8-4546-933c-70ad7996858a"
+      }
     }
   }
 }

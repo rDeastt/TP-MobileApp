@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSurvey } from '@/hooks/SurveyContext';
 import { mapFormToModel } from '@/hooks/utils/mapFormToModel';
-import urlContainer from '@/urlContainer';
+import urlContainer from '@/hooks/urlContainer';
 import ThemedView from '@/components/shared/ThemedView';
 import ThemedButton from '@/components/shared/ThemedButton';
 import { getUserId } from '@/hooks/utils/userId';
-import { printHistory, saveResult, clearHistory } from '@/components/shared/burnoutHistory';
+import { saveResult } from '@/components/shared/burnoutHistory';
 
 
 const TestScreen = () => {

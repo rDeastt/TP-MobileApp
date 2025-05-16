@@ -37,7 +37,6 @@ const StatsScreen = () => {
         setHistory(parsed);
 
         const last = parsed[parsed.length - 1];
-        console.log('Último resultado:', last);
         if (last?.factores) {
           const factoresPositivos = last.factores
             .filter((f: any) => f.impacto_modelo > 0)
