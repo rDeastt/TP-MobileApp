@@ -35,7 +35,7 @@ const TestScreen = () => {
         }, 3000);
         } catch (err: any) {
           console.warn('Error al hacer la predicción', err);
-          setErrorMsg(err.message || 'Error desconocido');
+          setErrorMsg(JSON.stringify(err?.response?.data || err?.message || err, null, 2));
           setTimeout(() => {
             setError(true);
             setLoading(false);
