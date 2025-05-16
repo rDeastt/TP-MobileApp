@@ -18,6 +18,7 @@ const TestScreen = () => {
   const [loading, setLoading] = useState(true);
   const [result,  setResult]  = useState<number | null>(null);
   const [error,   setError]   = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   /* -------- petición + guardado -------- */
   useEffect(() => {
@@ -32,13 +33,14 @@ const TestScreen = () => {
           await saveResult(prob, responses, data.factores);       // ← guarda fecha, prob y nombre
           setLoading(false);
         }, 3000);
-      } catch (err) {
-        console.warn('Error al hacer la predicción', err);
-        setTimeout(() => {
-          setError(true);
-          setLoading(false);
-        }, 3000);
-      }
+        } catch (err: any) {
+          console.warn('Error al hacer la predicción', err);
+          setErrorMsg(err.message || 'Error desconocido');
+          setTimeout(() => {
+            setError(true);
+            setLoading(false);
+          }, 3000);
+        }
     })();
   }, []);
 
@@ -65,6 +67,11 @@ const TestScreen = () => {
     return (
       <View className="flex-1 justify-center items-center bg-white p-6">
         <Text className="text-2xl font-bold text-red-500">¡Oops! Hubo un error.</Text>
+        {errorMsg && (
+          <Text className="mt-4 text-gray-600 text-sm text-center">
+            {errorMsg}
+          </Text>
+        )}
       </View>
     );
 
