@@ -2,7 +2,7 @@
   "expo": {
     "name": "Buno Zero",
     "slug": "Buno-App",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.deastt.BunoApp"
+      "package": "com.deastt.BunoApp",
+      "allowHttp": true
     },
     "web": {
       "bundler": "metro",
