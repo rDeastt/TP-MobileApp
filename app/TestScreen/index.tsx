@@ -46,11 +46,11 @@ const TestScreen = () => {
 
   /* -------------- UI helpers -------------- */
   const getRiskInfo = (p: number) => {
-    if (p < 30) return { title:'¡Buen trabajo!\nRiesgo bajo', emoji:'😊', color:'text-green-600',
+    if (p < 30) return { title:'¡Buen trabajo!\nRiesgo de burnout bajo', emoji:'😊', color:'text-green-600',
       advice:'Mantén tus hábitos de autocuidado.' };
     if (p >= 50) return { title:'Riesgo alto de burnout', emoji:'😟', color:'text-red-500',
       advice:'Revisa tus rutinas y busca apoyo.' };
-    return { title:'Riesgo moderado', emoji:'😐', color:'text-yellow-500',
+    return { title:'Riesgo moderado de burnout', emoji:'😐', color:'text-yellow-500',
       advice:'Aplica pequeñas mejoras para reducir el riesgo.' };
   };
 

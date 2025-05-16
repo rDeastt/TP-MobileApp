@@ -21,7 +21,7 @@ const LastPredictionCard = ({ percentage, bgColor = 'bg-sky-400', ...rest }: Pro
   
   return (
     <View className={`w-full rounded-3xl p-5 ${bgColor} mb-4`}>
-      <Text className="text-lg font-semibold text-white mb-2">Tu última predicción</Text>
+      <Text className="text-lg font-semibold text-white mb-2">Tu última predicción de burnout</Text>
 
       <View className="flex-row items-center justify-between">
         <Text className="text-5xl font-extrabold text-white">

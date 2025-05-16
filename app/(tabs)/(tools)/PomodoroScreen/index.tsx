@@ -13,7 +13,7 @@ import Tomato from '@/components/pomodoro/Tomato';
 import zap1 from '../../../../assets/sounds/zap1.mp3';
 import zap2 from '../../../../assets/sounds/zap2.mp3';
 
-const WORK_DURATION  = 20*60; // 20*60 en producción
+const WORK_DURATION  = 25*60; // 20*60 en producción
 const BREAK_DURATION = 5*60; // 5*60 en producción
 
 /* ------- helper sonido -------- */
@@ -110,7 +110,12 @@ const PomodoroScreen = () => {
         className="flex-1 justify-center items-center bg-[#F3F3F3] px-6"
       >
         <Text className="text-2xl font-bold mb-4">Pomodoro</Text>
-        <Text className="text-base mb-2">
+        <Text className='text-center'>
+          Es una forma de estudiar o trabajar por partes.
+          Trabajas 25 minutos y descansas 5.
+          Así te cansas menos y te concentras mejor. 🙌
+        </Text>
+        <Text className="text-base mt-2 mb-2 font-bold">
           ¿Cuántas repeticiones deseas hacer?
         </Text>
 

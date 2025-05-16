@@ -252,7 +252,7 @@ const ThoughtsScreen = () => {
 
   /* ---------- Render ---------- */
   return (
-    <ThemedView margin className="flex-1 bg-white">
+    <ThemedView className="flex-1 bg-white">
       <ScrollView contentContainerClassName="px-4 pb-10">
         {/* Header */}
         <View className="flex-row justify-between items-center mt-6 mb-4">
@@ -421,12 +421,15 @@ const ThoughtsScreen = () => {
             />
             <View className="flex-row justify-end mt-4 space-x-3">
               <Pressable
+                className='bg-gray-500 rounded-full px-4 py-2 mr-2'
                 onPress={() => setShowTransformModal(false)}
               >
-                <Text className="text-gray-500 font-medium">Cancelar</Text>
+                <Text className="text-white font-medium">Cancelar</Text>
               </Pressable>
-              <Pressable onPress={confirmTransformation}>
-                <Text className="text-[#4ADF86] font-semibold">
+              <Pressable 
+                className='bg-main rounded-full px-4 py-2'
+                onPress={confirmTransformation}>
+                <Text className="text-white font-semibold">
                   Guardar
                 </Text>
               </Pressable>
