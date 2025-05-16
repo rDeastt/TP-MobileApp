@@ -129,7 +129,7 @@ const MeditationScreen = () => {
           ) : (
             <Pressable
               onPress={pauseTimer}
-              className="py-3 px-6 rounded-full bg-yellow-400 active:opacity-80"
+              className="py-3 px-6 rounded-full bg-main active:opacity-80"
             >
               <Text className="text-white font-semibold text-lg">Pausar</Text>
             </Pressable>
@@ -137,7 +137,7 @@ const MeditationScreen = () => {
 
           <Pressable
             onPress={reset}
-            className="py-3 px-6 rounded-full bg-red-500 active:opacity-80 ml-2"
+            className="py-3 px-6 rounded-full bg-[#f472b6] active:opacity-80 ml-2"
           >
             <Text className="text-white font-semibold text-lg">Detener</Text>
           </Pressable>

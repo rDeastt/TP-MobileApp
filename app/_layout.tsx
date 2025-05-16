@@ -12,6 +12,8 @@ import { SurveyProvider } from '@/hooks/SurveyContext';
 import { Test } from '@/constants/Routes';
 import { StatusBar } from 'react-native';
 
+
+import 'react-native-get-random-values';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 

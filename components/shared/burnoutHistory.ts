@@ -139,6 +139,6 @@ export const getDaysSinceLastPrediction = async (): Promise<number | null> => {
 export const getDaysUntilNextPrediction = async (): Promise<number> => {
   const since = await getDaysSinceLastPrediction();
   if (since === null) return 0;      // nunca se ha hecho → disponible
-  const remaining = 7 - since;
+  const remaining = 14 - since;
   return remaining < 0 ? 0 : remaining;
 };

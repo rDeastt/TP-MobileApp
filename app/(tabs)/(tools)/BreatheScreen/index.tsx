@@ -102,8 +102,8 @@ const BreatheScreen = () => {
   const cycTxt = phase!=='choose'&&phase!=='prepare'&&phase!=='complete'
                  ?` (Ciclo ${cycleRef.current+1}/3)`:'';
 
-  const Btn = ({text,onPress,color='bg-green-500'}:{text:string;onPress:()=>void;color?:string})=>(
-    <TouchableOpacity onPress={onPress} className={`${color} px-6 py-4 mt-5 rounded-xl items-center w-full`}>
+  const Btn = ({text,onPress,color='bg-main'}:{text:string;onPress:()=>void;color?:string})=>(
+    <TouchableOpacity onPress={onPress} className={`${color} px-6 py-4 mt-5 rounded-full items-center w-full`}>
       <Text className="text-white font-semibold text-lg">{text}</Text>
     </TouchableOpacity>);
 
@@ -111,7 +111,7 @@ const BreatheScreen = () => {
     const sel = t.id===selectedId;
     return <TouchableOpacity key={t.id} disabled={phase!=='choose'}
               onPress={()=>{setTech(t);setSelected(t.id)}}
-              className={`px-4 py-2 mx-1 mb-2 rounded-xl ${sel?'bg-green-500':'bg-gray-200'}`}>
+              className={`px-4 py-2 mx-1 mb-2 rounded-full ${sel?'bg-secondary':'bg-gray-200'}`}>
               <Text className={`font-semibold ${sel?'text-white':'text-gray-700'}`}>{t.name}</Text>
            </TouchableOpacity>; };
 
@@ -149,7 +149,7 @@ const BreatheScreen = () => {
             <Text className="text-white font-semibold text-xl">{label[phase]}</Text>
           </Animated.View>
           <View className="mt-12 space-y-5 w-56">
-            <Btn text="Detener" onPress={backToChoose} color="bg-red-500"/>
+            <Btn text="Detener" onPress={backToChoose} color="bg-[#f472b6]"/>
           </View>
         </View>
       )}
@@ -167,8 +167,8 @@ const BreatheScreen = () => {
     <View className="px-6 mb-6 space-y-5">
       {phase==='choose'   && <Btn text="Iniciar" onPress={startSession}/>}
       {phase==='complete' && <>
-        <Btn text="Practicar de nuevo" onPress={startSession}/>
-        <Btn text="Volver" onPress={backToChoose} color="bg-yellow-500"/>
+        <Btn text="Practicar de nuevo" color="bg-[#6366f1]" onPress={startSession}/>
+        <Btn text="Volver" onPress={backToChoose} color="bg-main"/>
       </>}
     </View>
   </ThemedView>);

@@ -1,5 +1,5 @@
 
-const url = 'http://192.168.18.4:8000'
+const url = 'http://buno-api.a7baejd9cmhkgyb4.eastus.azurecontainer.io:8000'
 
 const urlContainer = () => {
   return url

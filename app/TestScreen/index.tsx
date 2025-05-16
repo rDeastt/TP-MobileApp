@@ -6,7 +6,7 @@ import { mapFormToModel } from '@/hooks/utils/mapFormToModel';
 import urlContainer from '@/urlContainer';
 import ThemedView from '@/components/shared/ThemedView';
 import ThemedButton from '@/components/shared/ThemedButton';
-
+import { getUserId } from '@/hooks/utils/userId';
 import { printHistory, saveResult, clearHistory } from '@/components/shared/burnoutHistory';
 
 
@@ -23,7 +23,9 @@ const TestScreen = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.post(`${url}/predict`, mapped);
+        const user_id = await getUserId();           // ← único por dispositivo
+        const payload  = { user_id, ...mapped }; 
+        const { data } = await axios.post(`${url}/predict`, payload);
         setTimeout(async () => {
           const prob = data.probabilidad_burnout * 100;          // 0-100
           setResult(prob);
@@ -53,7 +55,7 @@ const TestScreen = () => {
   /* -------------- estados de carga / error -------------- */
   if (loading)
     return (
-      <View className="flex-1 justify-center items-center bg-white">
+      <View className="flex-1 justify-center items-center bg-[#F3F3F3]">
         <ActivityIndicator size="large" color="#4ADF86" />
         <Text className="text-lg mt-4 text-gray-700">Calculando tu resultado…</Text>
       </View>

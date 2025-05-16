@@ -29,7 +29,11 @@ const SemesterScreen = () => {
             placeholder="Escribe el semestre que cursas"
             value={responses.semestre.toString()}
             keyboardType='numeric'
-            onChangeText={(text) => updateResponse('semestre', Number(text))}
+            onChangeText={(text) => {
+                /** quita todo lo que no sea dígito */
+                const onlyNums = text.replace(/[^0-9]/g, '');
+                updateResponse('semestre', Number(onlyNums));
+            }}            
           />
         </View>
       </View>

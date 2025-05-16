@@ -70,14 +70,6 @@ const HomeScreen = () => {
         />
       )}
 
-      <Pressable
-        onPress={clearHistory}                       // ← imprime en consola
-        className="bg-emerald-500 px-6 py-4 rounded-xl mt-10 w-full items-center"
-      >
-        <Text className="text-white font-semibold text-lg">
-          Ver mis recomendaciones
-        </Text>
-      </Pressable>
     </ThemedView>
   );
 };
