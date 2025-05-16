@@ -102,16 +102,7 @@ const StatsScreen = () => {
               </Text>
             </View>
 
-            {positiveFactors.length > 0 && (
-              <View className="mt-6 bg-cards rounded-xl p-4">
-                <Text className="font-semibold text-lg mb-2 text-blue-800">
-                  Lo que más te está afectando actualmente:
-                </Text>
-                {positiveFactors.map((item, idx) => (
-                  <Text key={idx} className="text-gray-700">• {item}</Text>
-                ))}
-              </View>
-            )}
+
           </>
         ) : (
           <View className="flex-1 items-center justify-center mt-20">
@@ -120,6 +111,16 @@ const StatsScreen = () => {
             </Text>
           </View>
         )}
+          {positiveFactors.length > 0 && (
+            <View className="mt-6 bg-cards rounded-xl p-4">
+              <Text className="font-semibold text-lg mb-2 text-blue-800">
+                Lo que más te está afectando actualmente:
+              </Text>
+              {positiveFactors.map((item, idx) => (
+                <Text key={idx} className="text-gray-700">• {item}</Text>
+              ))}
+            </View>
+          )}
       </ScrollView>
     </ThemedView>
   );
