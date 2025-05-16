@@ -16,8 +16,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.deastt.BunoApp",
-      "allowHttp": true
+      "package": "com.deastt.BunoApp"
     },
     "web": {
       "bundler": "metro",
@@ -34,7 +33,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-build-properties",
+      {
+          "android": {
+          "usesCleartextTraffic": true
+        }
+      }
     ],
     "experiments": {
       "typedRoutes": true
