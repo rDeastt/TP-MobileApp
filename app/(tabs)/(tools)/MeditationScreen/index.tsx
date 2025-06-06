@@ -75,7 +75,7 @@ const MeditationScreen = () => {
     if (mode === 'menu') {
       return (
         <View className="items-center px-6 mt-10 w-full">
-          <Text className="text-3xl font-bold mb-2">Mindfulness</Text>
+          <Text className="text-3xl font-bold mb-2">Meditación</Text>
           <Text className="text-lg font-semibold text-center mb-6">✨ Encuentra calma en minutos ✨</Text>
           <Text className="text-gray-500 text-center mb-8">Elige una de las actividades guiadas para reducir el estrés y volver al presente.</Text>
 

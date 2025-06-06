@@ -20,7 +20,7 @@ const SemesterScreen = () => {
         </View>
 
         <View className='items-center justify-center flex-1'>
-          <SpeechBubble text="En que semestre te encuentras?" source="Outi" />
+          <SpeechBubble text="¿En qué semestre te encuentras actualmente?" source="Outi" />
           <ThemedAvatar source={require('../../../assets/avatars/avatar-3.png')} animate />
 
           {/* Input para nombre */}

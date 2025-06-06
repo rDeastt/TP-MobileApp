@@ -19,7 +19,7 @@ const NameScreen = () => {
         </View>
 
         <View className='items-center justify-center flex-1 pb-10'>
-          <SpeechBubble text="Como dije antes mi nombre es Buno, ¿Cómo te llamas tu?" source="Buno" />
+          <SpeechBubble text="Ya sabes que yo soy Buno 😊 ¿Y tú? ¿Cómo te llamas?" source="Buno" />
           <ThemedAvatar source={require('../../../assets/avatars/avatar-1.png')} animate />
 
           {/* Input para nombre */}

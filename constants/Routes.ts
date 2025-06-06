@@ -8,6 +8,11 @@ interface MenuRoute{
 
 export const questRoutes: MenuRoute[] = [
   {
+    title: 'Bienvenida',
+    icon: 'refresh-outline',
+    name: 'WelcomeScreen/index',
+  },
+  {
     title: 'Nombre',
     icon: 'refresh-outline',
     name: 'NameScreen/index',
@@ -119,7 +124,7 @@ export const Tools: MenuRoute[] = [
     name: 'PomodoroScreen/index',
   },
   {
-    title: 'Rutina sencilla',
+    title: 'Rutina sencilla de ejercicio',
     icon: 'square-outline',
     name: 'RoutineScreen/index',
   },

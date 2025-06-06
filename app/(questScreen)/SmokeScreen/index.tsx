@@ -20,7 +20,7 @@ const SmokeScreen = () => {
         </View>
 
         <View className='items-center justify-center flex-1 mb-10'>
-          <SpeechBubble text="Se honesto, fumas bastante?" source="Lina" />
+          <SpeechBubble text="Se honesto, ¿fumas bastante?" source="Lina" />
           <ThemedAvatar source={require('../../../assets/avatars/avatar-6.png')} animate />
 
           {/* Input para nombre */}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, PressableProps } from 'react-native';
 import { getDaysUntilNextPrediction } from './burnoutHistory';
+import { router } from 'expo-router';
 
 interface Props extends PressableProps {
     percentage: number | null;      // ← puede ser null
@@ -30,8 +31,11 @@ const LastPredictionCard = ({ percentage, bgColor = 'bg-sky-400', ...rest }: Pro
 
         <Pressable
           disabled={disabled}
-          className={`rounded-xl px-6 py-4 ${
-            disabled ? 'bg-gray-300' : 'bg-emerald-500 active:opacity-80'
+          onPress={disabled ? null : ()=>{
+            router.push('/NameScreen')
+          }}
+          className={`rounded-full px-6 py-4 ${
+            disabled ? 'bg-gray-300' : 'bg-main active:opacity-80'
           }`}
           {...rest}
         >

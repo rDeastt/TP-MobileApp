@@ -94,13 +94,13 @@ const RoutineScreen = () => {
   const Btn = ({
     text,
     onPress,
-    color = 'bg-green-500',
+    color = 'bg-main',
   }: {
     text: string;
     onPress: () => void;
     color?: string;
   }) => (
-    <TouchableOpacity onPress={onPress} className={`${color} px-6 py-3 rounded-xl items-center w-full mb-5`}>
+    <TouchableOpacity onPress={onPress} className={`${color} px-6 py-3 rounded-full items-center w-full mb-5`}>
       <Text className="text-white font-semibold text-lg">{text}</Text>
     </TouchableOpacity>
   );

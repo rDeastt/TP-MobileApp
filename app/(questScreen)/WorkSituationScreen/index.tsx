@@ -20,7 +20,7 @@ const WorkSituationScreen = () => {
         </View>
 
         <View className='items-center justify-center flex-1'>
-          <SpeechBubble text="Como te encuentras laboralmente?" source="Buno" />
+          <SpeechBubble text="¿Como te encuentras laboralmente?" source="Buno" />
           <ThemedAvatar source={require('../../../assets/avatars/avatar-4.png')} animate />
 
           {/* Input para nombre */}

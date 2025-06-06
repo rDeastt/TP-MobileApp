@@ -20,7 +20,7 @@ const AgeScreen = () => {
         </View>
 
         <View className='items-center justify-center flex-1 mb-5'>
-          <SpeechBubble text="Acabo de nacer hoy, así que solo tengo unas horas de edad. ¿Y tú? ¿Cuántos años tienes?" source="Buno" />
+          <SpeechBubble text="Genial, y ahora dime, ¿cuántos años tienes?" source="Buno" />
           <ThemedAvatar source={require('../../../assets/avatars/avatar-3.png')} animate />
 
           {/* Input para nombre */}

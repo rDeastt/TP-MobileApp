@@ -20,7 +20,7 @@ const SleepQualityScreen = () => {
         </View>
 
         <View className='justify-center flex-1 mb-10'>
-          <SpeechBubble text="¿ Cómo consideras tu calidad de sueño ?" 
+          <SpeechBubble text="¿Cómo consideras tu calidad de sueño?" 
           source="Ventu" />
           <ThemedAvatar source={require('../../../assets/avatars/avatar-12.png')} animate />
           
