@@ -1,17 +1,68 @@
-import { View, Text, ScrollView, Image } from 'react-native';
-import React from 'react';
-import ThemedView from '@/components/shared/ThemedView';
-import { Pressable } from 'react-native';
+import { View, Text, ScrollView, Image, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { Audio } from 'expo-av';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import ThemedView from '@/components/shared/ThemedView';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ActivePauseScreen = () => {
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      let isMounted = true;
+      let currentSound: Audio.Sound;
+
+      const loadAndPlay = async () => {
+        const { sound } = await Audio.Sound.createAsync(
+          require('../../../../assets/sounds/active-pause.mp3'),
+          {
+            shouldPlay: true,
+            isLooping: true,
+            volume: 1.0,
+          }
+        );
+        currentSound = sound;
+        if (isMounted) setSound(sound);
+      };
+
+      loadAndPlay();
+
+      return () => {
+        isMounted = false;
+        if (currentSound) {
+          currentSound.stopAsync();
+          currentSound.unloadAsync();
+        }
+      };
+    }, [])
+  );
+
+  const toggleMute = async () => {
+    if (sound) {
+      await sound.setIsMutedAsync(!isMuted);
+      setIsMuted(!isMuted);
+    }
+  };
+
   return (
     <ThemedView margin className="flex-1 bg-white">
       <ScrollView contentContainerClassName="items-center px-4 pb-10" showsVerticalScrollIndicator={false}>
         <Text className="text-2xl font-bold text-center mt-6">Pausa Activa</Text>
-        <Text className="text-center text-gray-600 mt-1 mb-6">
-          🧳 Relájate con estos ejercicios simples mientras escuchas música suave 🎵
-        </Text>
+
+        <View className="items-center mt-1 mb-6">
+          <Text className="text-center text-gray-600">
+            🧳 Relájate con estos ejercicios simples mientras escuchas música suave 🎵
+          </Text>
+          <Pressable
+            onPress={toggleMute}
+            className="w-8 h-8 mt-2 bg-white rounded-full items-center justify-center shadow"
+          >
+            <Ionicons name={isMuted ? 'volume-mute' : 'volume-high'} size={20} color="black" />
+          </Pressable>
+        </View>
 
         {/* Ejercicio 1 */}
         <Image

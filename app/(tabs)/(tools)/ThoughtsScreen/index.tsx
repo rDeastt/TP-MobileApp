@@ -172,8 +172,9 @@ const ThoughtsScreen = () => {
   const saveThoughts = async (list: ThoughtItem[]) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch (_) {
-      /* fallo silencioso */
+      console.log("Pensamiento guardado \n" + JSON.stringify(list,null,2))
+    } catch (error) {
+      console.error(error)
     }
   };
 
