@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { View, Text, Image, Pressable, AppState, AppStateStatus } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const meditationModes = {
@@ -10,60 +10,110 @@ const meditationModes = {
 
 type Mode = keyof typeof meditationModes;
 
+const TICK_MS = 250; // intervalo liviano para refrescar UI en foreground
+
 const MeditationScreen = () => {
   const [mode, setMode] = useState<Mode>('menu');
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [paused, setPaused] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startTimer = (duration: number) => {
-    clearIntervalIfRunning();
-    setSecondsLeft(duration);
-    setPaused(false);
-    intervalRef.current = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev <= 1) {
-          clearIntervalIfRunning();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
+  // Momento absoluto en el que debe terminar el conteo (ms desde epoch)
+  const endAtRef = useRef<number | null>(null);
+  const tickRef = useRef<NodeJS.Timeout | null>(null);
+  const appState = useRef(AppState.currentState);
 
-  const clearIntervalIfRunning = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+  const clearTick = () => {
+    if (tickRef.current) {
+      clearInterval(tickRef.current);
+      tickRef.current = null;
     }
   };
 
+  // Calcula segundos restantes en base a endAt y actualiza estado
+  const syncRemaining = useCallback(() => {
+    if (!endAtRef.current) return;
+    const remainingMs = Math.max(0, endAtRef.current - Date.now());
+    const remainingSec = Math.ceil(remainingMs / 1000);
+    setSecondsLeft(remainingSec);
+    if (remainingSec <= 0) {
+      // terminó
+      endAtRef.current = null;
+      clearTick();
+      setPaused(false);
+    }
+  }, []);
+
+  // Arranca el refresco de UI solo en foreground y si no está pausado
+  const startTickIfNeeded = useCallback(() => {
+    if (tickRef.current || paused || !endAtRef.current) return;
+    tickRef.current = setInterval(syncRemaining, TICK_MS);
+  }, [paused, syncRemaining]);
+
+  const stopTick = useCallback(() => {
+    clearTick();
+  }, []);
+
+  const startTimer = (durationSec: number) => {
+    // Define el objetivo absoluto
+    endAtRef.current = Date.now() + durationSec * 1000;
+    setPaused(false);
+    syncRemaining();      // actualiza inmediatamente
+    startTickIfNeeded();  // refresco en foreground
+  };
+
   const pauseTimer = () => {
+    // Congela el restante actual
+    syncRemaining();
     setPaused(true);
-    clearIntervalIfRunning();
+    stopTick();
+    endAtRef.current = null; // limpiamos objetivo mientras está en pausa
   };
 
   const resumeTimer = () => {
-    if (!intervalRef.current && secondsLeft > 0) {
+    if (secondsLeft > 0) {
       setPaused(false);
-      intervalRef.current = setInterval(() => {
-        setSecondsLeft((prev) => {
-          if (prev <= 1) {
-            clearIntervalIfRunning();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      endAtRef.current = Date.now() + secondsLeft * 1000;
+      syncRemaining();
+      startTickIfNeeded();
     }
   };
 
   const reset = () => {
     setMode('menu');
-    clearIntervalIfRunning();
-    setSecondsLeft(0);
     setPaused(false);
+    stopTick();
+    endAtRef.current = null;
+    setSecondsLeft(0);
   };
+
+  // Manejo de cambios de estado de la app (foreground/background)
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      const prev = appState.current;
+      appState.current = nextState;
+
+      // Al volver a 'active', sincronizamos el tiempo restante
+      if (prev.match(/inactive|background/) && nextState === 'active') {
+        syncRemaining();      // recalcula en base a endAt
+        startTickIfNeeded();  // reanima el refresco del UI si corresponde
+      }
+
+      // Al ir a background, paramos el refresco del UI (el tiempo sigue corriendo por endAt)
+      if (nextState.match(/inactive|background/)) {
+        stopTick();
+      }
+    });
+
+    return () => sub.remove();
+  }, [startTickIfNeeded, stopTick, syncRemaining]);
+
+  // Limpieza al desmontar
+  useEffect(() => {
+    return () => {
+      stopTick();
+      endAtRef.current = null;
+    };
+  }, [stopTick]);
 
   const formatTime = (sec: number) => {
     const m = Math.floor(sec / 60).toString().padStart(2, '0');
@@ -77,23 +127,19 @@ const MeditationScreen = () => {
         <View className="items-center px-6 mt-10 w-full">
           <Text className="text-3xl font-bold mb-2">Meditación</Text>
           <Text className="text-lg font-semibold text-center mb-6">✨ Encuentra calma en minutos ✨</Text>
-          <Text className="text-gray-500 text-center mb-8">Elige una de las actividades guiadas para reducir el estrés y volver al presente.</Text>
+          <Text className="text-gray-500 text-center mb-8">
+            Elige una de las actividades guiadas para reducir el estrés y volver al presente.
+          </Text>
 
           <Pressable
-            onPress={() => {
-              setMode('short');
-              startTimer(5 * 60);
-            }}
+            onPress={() => { setMode('short'); startTimer(5 * 60); }}
             className="w-full py-4 rounded-full bg-[#4ADF86] active:opacity-80 mb-4"
           >
             <Text className="text-white text-center font-bold text-lg">Meditación breve (5 min)</Text>
           </Pressable>
 
           <Pressable
-            onPress={() => {
-              setMode('medium');
-              startTimer(10 * 60);
-            }}
+            onPress={() => { setMode('medium'); startTimer(10 * 60); }}
             className="w-full py-4 rounded-full bg-[#4ADF86] active:opacity-80"
           >
             <Text className="text-white text-center font-bold text-lg">Meditación media (10 min)</Text>
@@ -120,25 +166,16 @@ const MeditationScreen = () => {
 
         <View className="flex-row space-x-4">
           {paused ? (
-            <Pressable
-              onPress={resumeTimer}
-              className="py-3 px-6 rounded-full bg-[#4ADF86] active:opacity-80"
-            >
+            <Pressable onPress={resumeTimer} className="py-3 px-6 rounded-full bg-[#4ADF86] active:opacity-80">
               <Text className="text-white font-semibold text-lg">Reanudar</Text>
             </Pressable>
           ) : (
-            <Pressable
-              onPress={pauseTimer}
-              className="py-3 px-6 rounded-full bg-main active:opacity-80"
-            >
+            <Pressable onPress={pauseTimer} className="py-3 px-6 rounded-full bg-main active:opacity-80">
               <Text className="text-white font-semibold text-lg">Pausar</Text>
             </Pressable>
           )}
 
-          <Pressable
-            onPress={reset}
-            className="py-3 px-6 rounded-full bg-[#f472b6] active:opacity-80 ml-2"
-          >
+          <Pressable onPress={reset} className="py-3 px-6 rounded-full bg-[#f472b6] active:opacity-80 ml-2">
             <Text className="text-white font-semibold text-lg">Detener</Text>
           </Pressable>
         </View>
