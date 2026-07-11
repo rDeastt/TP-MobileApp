@@ -62,6 +62,19 @@ Estas actividades refuerzan tu bienestar emocional y previenen el agotamiento ac
     `,
   },
 
+  {
+    id: 'low-gratitude',
+    level: 'low',
+    title: 'Escribe tu diario de gratitud',
+    summary: 'Anotar lo bueno del día refuerza tu bienestar.',
+    iconName: 'journal-outline',
+    body: `
+Cada noche, abre el Diario de Gratitud de la app y anota de 1 a 3 cosas buenas de tu día, por pequeñas que sean.
+
+Este hábito entrena a tu mente a enfocarse en lo positivo y es una de las prácticas preventivas con más respaldo científico.
+    `,
+  },
+
   /* ─────────────── MODERATE (30–49 %) ─────────────── */
   {
     id: 'mod-pomodoro-breaks',
@@ -114,6 +127,19 @@ Utiliza las herramientas de la app para ayudarte a establecer la rutina.
     `,
   },
 
+  {
+    id: 'mod-sleep-hygiene',
+    level: 'moderate',
+    title: 'Cuida tu higiene del sueño',
+    summary: 'Dormir bien es tu mejor defensa contra el burnout.',
+    iconName: 'moon-outline',
+    body: `
+La calidad del sueño es uno de los factores que más pesa en tu predicción de burnout.
+
+Usa la checklist de Higiene del Sueño de la app cada noche: deja las pantallas una hora antes, evita la cafeína por la tarde y mantén un horario regular.
+    `,
+  },
+
   /* ─────────────── HIGH (≥50 %) ─────────────── */
   {
     id: 'high-prof-help',
@@ -150,6 +176,18 @@ Hazlo diariamente para cortar el ciclo de agotamiento emocional.
 Accede a la herramienta TCC y trabaja con pensamientos como “soy un fracaso” o “todo me supera”.
 
 Al escribirlos, analizarlos y reformularlos, les quitas fuerza y recuperas tu autoeficacia.
+    `,
+  },
+  {
+    id: 'high-sleep-first',
+    level: 'high',
+    title: 'Prioriza tu descanso esta semana',
+    summary: 'Recuperar el sueño es el primer paso para frenar el burnout.',
+    iconName: 'bed-outline',
+    body: `
+Con un riesgo alto, recuperar el sueño es la prioridad número uno.
+
+Completa la checklist de Higiene del Sueño de la app todas las noches de esta semana y registra al menos una cosa buena en el Diario de Gratitud antes de acostarte.
     `,
   },
   {

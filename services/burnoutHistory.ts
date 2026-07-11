@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const STORAGE_KEY = '@burnout_history';
 
+/* Intervalo único (días) para poder repetir el test */
+export const RETAKE_INTERVAL_DAYS = 14;
+
 /* ---------- Tipos ---------- */
 
 export interface HistoryItem {
@@ -79,21 +82,11 @@ export const getProbabilitiesHistory = async (): Promise<number[]> => {
   return history.map((h) => h.probability);
 };
 
-/* ---------- ¿Ha pasado una semana desde el último test? ---------- */
+/* ---------- ¿Ya se puede repetir el test? ---------- */
 export const shouldRetakeForm = async (): Promise<boolean> => {
-  const raw = await AsyncStorage.getItem(STORAGE_KEY);
-  if (!raw) return true; // nunca se ha tomado
-
-  const history: HistoryItem[] = JSON.parse(raw);
-  const lastDate = new Date(history[history.length - 1].date);
-  const today = new Date();
-
-  // Diferencia en días completos
-  const diffDays = Math.floor(
-    (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
-  );
-
-  return diffDays >= 7;
+  const since = await getDaysSinceLastPrediction();
+  if (since === null) return true; // nunca se ha tomado
+  return since >= RETAKE_INTERVAL_DAYS;
 };
 
 export const clearHistory = async (): Promise<void> => {
@@ -147,10 +140,10 @@ export const getDaysSinceLastPrediction = async (): Promise<number | null> => {
   return diffDays;
 };
 
-/* ───── Días restantes para poder repetir (intervalo 7 d) ───── */
+/* ───── Días restantes para poder repetir ───── */
 export const getDaysUntilNextPrediction = async (): Promise<number> => {
   const since = await getDaysSinceLastPrediction();
   if (since === null) return 0;      // nunca se ha hecho → disponible
-  const remaining = 14 - since;
+  const remaining = RETAKE_INTERVAL_DAYS - since;
   return remaining < 0 ? 0 : remaining;
 };

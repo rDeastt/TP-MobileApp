@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
+import * as Haptics from 'expo-haptics';
 
 interface ScaleSelectorProps {
   value: number;
@@ -27,6 +28,7 @@ const ScaleSelector: React.FC<ScaleSelectorProps> = ({
         maximumValue={max}
         step={1}
         value={value}
+        onValueChange={() => Haptics.selectionAsync()}
         onSlidingComplete={onValueChange}
         minimumTrackTintColor="#4ADF86"
         maximumTrackTintColor="#D8CFF5"
@@ -34,11 +36,11 @@ const ScaleSelector: React.FC<ScaleSelectorProps> = ({
       />
 
       <View className="flex-row justify-between mt-1">
-        <Text className="text-sm text-gray-600">{leftLabel}</Text>
-        <Text className="text-sm text-gray-600">{rightLabel}</Text>
+        <Text className="text-sm text-muted dark:text-muted-dark">{leftLabel}</Text>
+        <Text className="text-sm text-muted dark:text-muted-dark">{rightLabel}</Text>
       </View>
 
-      <View className="self-center bg-[#4ADF86] mt-3 px-4 py-1 rounded-xl">
+      <View className="self-center bg-main mt-3 px-4 py-1 rounded-xl">
         <Text className="text-white font-bold text-base">{value}</Text>
       </View>
     </View>

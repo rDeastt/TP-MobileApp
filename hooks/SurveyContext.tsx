@@ -25,10 +25,12 @@ const initialResponses = {
   dificultadEmociones: 0
 };
 
+export type SurveyResponses = typeof initialResponses;
+
 // 👇 Interfaz del contexto
 interface SurveyContextType {
-  responses: typeof initialResponses;
-  updateResponse: (field: keyof typeof initialResponses, value: any) => void;
+  responses: SurveyResponses;
+  updateResponse: <K extends keyof SurveyResponses>(field: K, value: SurveyResponses[K]) => void;
 }
 
 // 👇 Crear el contexto con un valor inicial nulo o tipado opcional
@@ -43,7 +45,7 @@ interface ProviderProps {
 export const SurveyProvider = ({ children }: ProviderProps) => {
   const [responses, setResponses] = useState(initialResponses);
 
-  const updateResponse = (field: keyof typeof initialResponses, value: any) => {
+  const updateResponse = <K extends keyof SurveyResponses>(field: K, value: SurveyResponses[K]) => {
     setResponses(prev => ({ ...prev, [field]: value }));
   };
 

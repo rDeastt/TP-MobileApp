@@ -1,189 +1,130 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, Text, Image, Pressable, AppState, AppStateStatus } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useCallback, useState } from 'react';
+import { View, Text, Image } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import * as Haptics from 'expo-haptics';
+import Screen from '@/components/shared/Screen';
+import ThemedButton from '@/components/shared/ThemedButton';
+import ProgressRing from '@/components/shared/ProgressRing';
+import { useCountdown } from '@/hooks/useCountdown';
+import { useSound } from '@/hooks/useSound';
+import { SOUNDS } from '@/constants/sounds';
+import { formatTime } from '@/utils/formatTime';
+import { logCompletion } from '@/services/activityLog';
 
-const meditationModes = {
-  menu: 'menu',
-  short: 'short',
-  medium: 'medium',
-} as const;
+type Mode = 'menu' | 'short' | 'medium';
 
-type Mode = keyof typeof meditationModes;
-
-const TICK_MS = 250; // intervalo liviano para refrescar UI en foreground
+const DURATIONS: Record<Exclude<Mode, 'menu'>, number> = {
+  short: 5 * 60,
+  medium: 10 * 60,
+};
 
 const MeditationScreen = () => {
   const [mode, setMode] = useState<Mode>('menu');
-  const [secondsLeft, setSecondsLeft] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const gong = useSound(SOUNDS.success);
 
-  // Momento absoluto en el que debe terminar el conteo (ms desde epoch)
-  const endAtRef = useRef<number | null>(null);
-  const tickRef = useRef<NodeJS.Timeout | null>(null);
-  const appState = useRef(AppState.currentState);
+  const countdown = useCountdown({
+    onComplete: () => {
+      gong.play();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      logCompletion('meditation');
+    },
+  });
 
-  const clearTick = () => {
-    if (tickRef.current) {
-      clearInterval(tickRef.current);
-      tickRef.current = null;
-    }
-  };
-
-  // Calcula segundos restantes en base a endAt y actualiza estado
-  const syncRemaining = useCallback(() => {
-    if (!endAtRef.current) return;
-    const remainingMs = Math.max(0, endAtRef.current - Date.now());
-    const remainingSec = Math.ceil(remainingMs / 1000);
-    setSecondsLeft(remainingSec);
-    if (remainingSec <= 0) {
-      // terminó
-      endAtRef.current = null;
-      clearTick();
-      setPaused(false);
-    }
-  }, []);
-
-  // Arranca el refresco de UI solo en foreground y si no está pausado
-  const startTickIfNeeded = useCallback(() => {
-    if (tickRef.current || paused || !endAtRef.current) return;
-    tickRef.current = setInterval(syncRemaining, TICK_MS);
-  }, [paused, syncRemaining]);
-
-  const stopTick = useCallback(() => {
-    clearTick();
-  }, []);
-
-  const startTimer = (durationSec: number) => {
-    // Define el objetivo absoluto
-    endAtRef.current = Date.now() + durationSec * 1000;
-    setPaused(false);
-    syncRemaining();      // actualiza inmediatamente
-    startTickIfNeeded();  // refresco en foreground
-  };
-
-  const pauseTimer = () => {
-    // Congela el restante actual
-    syncRemaining();
-    setPaused(true);
-    stopTick();
-    endAtRef.current = null; // limpiamos objetivo mientras está en pausa
-  };
-
-  const resumeTimer = () => {
-    if (secondsLeft > 0) {
-      setPaused(false);
-      endAtRef.current = Date.now() + secondsLeft * 1000;
-      syncRemaining();
-      startTickIfNeeded();
-    }
+  const begin = (m: Exclude<Mode, 'menu'>) => {
+    setMode(m);
+    countdown.start(DURATIONS[m]);
   };
 
   const reset = () => {
+    countdown.stop();
     setMode('menu');
-    setPaused(false);
-    stopTick();
-    endAtRef.current = null;
-    setSecondsLeft(0);
   };
 
-  // Manejo de cambios de estado de la app (foreground/background)
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
-      const prev = appState.current;
-      appState.current = nextState;
+  /* Al salir de la pantalla el countdown se detiene solo (stopOnBlur);
+     aquí solo reseteamos la vista. */
+  useFocusEffect(
+    useCallback(() => {
+      return () => setMode('menu');
+    }, []),
+  );
 
-      // Al volver a 'active', sincronizamos el tiempo restante
-      if (prev.match(/inactive|background/) && nextState === 'active') {
-        syncRemaining();      // recalcula en base a endAt
-        startTickIfNeeded();  // reanima el refresco del UI si corresponde
-      }
-
-      // Al ir a background, paramos el refresco del UI (el tiempo sigue corriendo por endAt)
-      if (nextState.match(/inactive|background/)) {
-        stopTick();
-      }
-    });
-
-    return () => sub.remove();
-  }, [startTickIfNeeded, stopTick, syncRemaining]);
-
-  // Limpieza al desmontar
-  useEffect(() => {
-    return () => {
-      stopTick();
-      endAtRef.current = null;
-    };
-  }, [stopTick]);
-
-  const formatTime = (sec: number) => {
-    const m = Math.floor(sec / 60).toString().padStart(2, '0');
-    const s = (sec % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  };
-
-  const renderContent = () => {
-    if (mode === 'menu') {
-      return (
-        <View className="items-center px-6 mt-10 w-full">
-          <Text className="text-3xl font-bold mb-2">Meditación</Text>
-          <Text className="text-lg font-semibold text-center mb-6">✨ Encuentra calma en minutos ✨</Text>
-          <Text className="text-gray-500 text-center mb-8">
+  if (mode === 'menu') {
+    return (
+      <Screen className="items-center px-6">
+        <View className="items-center mt-10 w-full">
+          <Text className="text-3xl font-bold mb-2 text-content dark:text-content-dark">
+            Meditación
+          </Text>
+          <Text className="text-lg font-semibold text-center mb-6 text-content dark:text-content-dark">
+            ✨ Encuentra calma en minutos ✨
+          </Text>
+          <Text className="text-muted dark:text-muted-dark text-center mb-8">
             Elige una de las actividades guiadas para reducir el estrés y volver al presente.
           </Text>
 
-          <Pressable
-            onPress={() => { setMode('short'); startTimer(5 * 60); }}
-            className="w-full py-4 rounded-full bg-[#4ADF86] active:opacity-80 mb-4"
-          >
-            <Text className="text-white text-center font-bold text-lg">Meditación breve (5 min)</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => { setMode('medium'); startTimer(10 * 60); }}
-            className="w-full py-4 rounded-full bg-[#4ADF86] active:opacity-80"
-          >
-            <Text className="text-white text-center font-bold text-lg">Meditación media (10 min)</Text>
-          </Pressable>
+          <View className="w-full gap-4">
+            <ThemedButton onPress={() => begin('short')}>Meditación breve (5 min)</ThemedButton>
+            <ThemedButton onPress={() => begin('medium')}>Meditación media (10 min)</ThemedButton>
+          </View>
         </View>
-      );
-    }
+      </Screen>
+    );
+  }
 
-    const image =
-      mode === 'short'
-        ? require('../../../../assets/screenImages/meditation-1.png')
-        : require('../../../../assets/screenImages/meditation-2.png');
+  const image =
+    mode === 'short'
+      ? require('../../../../assets/screenImages/meditation-1.png')
+      : require('../../../../assets/screenImages/meditation-2.png');
 
-    return (
-      <View className="items-center px-6 mt-10">
-        <Text className="text-2xl font-bold mb-2">
+  const done = countdown.status === 'done';
+
+  return (
+    <Screen className="items-center px-6">
+      <View className="items-center mt-10 w-full">
+        <Text className="text-2xl font-bold mb-2 text-content dark:text-content-dark">
           {mode === 'short' ? 'Meditación breve' : 'Meditación media'}
         </Text>
-        <Text className="text-center text-gray-700 mb-6">🌿 Concéntrate en tu respiración 🌿</Text>
+        <Text className="text-center text-gray-700 dark:text-gray-300 mb-6">
+          {done ? '🌟 ¡Sesión completada! 🌟' : '🌿 Concéntrate en tu respiración 🌿'}
+        </Text>
 
-        <Image source={image} className="w-60 h-60 mb-8" resizeMode="contain" />
+        <ProgressRing progress={done ? 1 : countdown.progress} size={260} strokeWidth={10}>
+          <Image source={image} className="w-48 h-48" resizeMode="contain" />
+        </ProgressRing>
 
-        <Text className="text-5xl font-bold text-center mb-6">{formatTime(secondsLeft)}</Text>
+        <Text
+          className="text-5xl font-bold text-center my-6 text-content dark:text-content-dark"
+          style={{ fontFamily: 'SpaceMono' }}
+        >
+          {formatTime(countdown.secondsLeft)}
+        </Text>
 
-        <View className="flex-row space-x-4">
-          {paused ? (
-            <Pressable onPress={resumeTimer} className="py-3 px-6 rounded-full bg-[#4ADF86] active:opacity-80">
-              <Text className="text-white font-semibold text-lg">Reanudar</Text>
-            </Pressable>
-          ) : (
-            <Pressable onPress={pauseTimer} className="py-3 px-6 rounded-full bg-main active:opacity-80">
-              <Text className="text-white font-semibold text-lg">Pausar</Text>
-            </Pressable>
-          )}
-
-          <Pressable onPress={reset} className="py-3 px-6 rounded-full bg-[#f472b6] active:opacity-80 ml-2">
-            <Text className="text-white font-semibold text-lg">Detener</Text>
-          </Pressable>
-        </View>
+        {done ? (
+          <View className="w-full gap-3">
+            <ThemedButton onPress={() => begin(mode)}>Meditar de nuevo</ThemedButton>
+            <ThemedButton variant="ghost" onPress={reset}>
+              Volver
+            </ThemedButton>
+          </View>
+        ) : (
+          <View className="flex-row gap-3">
+            {countdown.status === 'paused' ? (
+              <ThemedButton className="flex-1" onPress={countdown.resume}>
+                Reanudar
+              </ThemedButton>
+            ) : (
+              <ThemedButton className="flex-1" onPress={countdown.pause}>
+                Pausar
+              </ThemedButton>
+            )}
+            <ThemedButton className="flex-1" variant="ghost" onPress={reset}>
+              Detener
+            </ThemedButton>
+          </View>
+        )}
       </View>
-    );
-  };
-
-  return <SafeAreaView className="flex-1 bg-[#F3F3F3]">{renderContent()}</SafeAreaView>;
+    </Screen>
+  );
 };
 
 export default MeditationScreen;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, PressableProps } from 'react-native';
-import { getDaysUntilNextPrediction } from './burnoutHistory';
+import { getDaysUntilNextPrediction } from '@/services/burnoutHistory';
 import { router } from 'expo-router';
 
 interface Props extends PressableProps {
@@ -8,7 +8,7 @@ interface Props extends PressableProps {
     bgColor?: string;
   }
 
-const LastPredictionCard = ({ percentage, bgColor = 'bg-sky-400', ...rest }: Props) => {
+const LastPredictionCard = ({ percentage, bgColor = 'bg-secondary dark:bg-secondary-dark', ...rest }: Props) => {
   const [remain, setRemain] = useState<number>(0);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const LastPredictionCard = ({ percentage, bgColor = 'bg-sky-400', ...rest }: Pro
   }, []);
 
   const disabled = remain > 0;
-  
+
   return (
     <View className={`w-full rounded-3xl p-5 ${bgColor} mb-4`}>
       <Text className="text-lg font-semibold text-white mb-2">Tu última predicción de burnout</Text>
@@ -31,11 +31,11 @@ const LastPredictionCard = ({ percentage, bgColor = 'bg-sky-400', ...rest }: Pro
 
         <Pressable
           disabled={disabled}
-          onPress={disabled ? null : ()=>{
-            router.push('/NameScreen')
+          onPress={() => {
+            if (!disabled) router.push('/NameScreen');
           }}
           className={`rounded-full px-6 py-4 ${
-            disabled ? 'bg-gray-300' : 'bg-main active:opacity-80'
+            disabled ? 'bg-gray-300 dark:bg-gray-700' : 'bg-main active:opacity-80'
           }`}
           {...rest}
         >

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'expo-router'
-import {getLastProbability} from '@/components/shared/burnoutHistory';
+import {getLastProbability} from '@/services/burnoutHistory';
 const BunnoApp = () => {
   // undefined = aún cargando  |  null = sin predicción  |  number = porcentaje
   const [percent, setPercent] = useState<number | null | undefined>(undefined);

@@ -3,7 +3,8 @@ import {Ionicons} from '@expo/vector-icons'
 interface MenuRoute{
   title: string,
   icon:keyof typeof Ionicons.glyphMap,
-  name:string
+  name:string,
+  color?: string
 }
 
 export const questRoutes: MenuRoute[] = [
@@ -115,38 +116,56 @@ export const Test: MenuRoute[] = [
 export const Tools: MenuRoute[] = [
   {
     title: 'Herramientas',
-    icon: 'square-outline',
+    icon: 'construct-outline',
     name: 'ToolsScreen/index',
   },
   {
     title: 'Pomodoro',
-    icon: 'square-outline',
+    icon: 'timer-outline',
     name: 'PomodoroScreen/index',
+    color: '#f97316',
   },
   {
     title: 'Rutina sencilla de ejercicio',
-    icon: 'square-outline',
+    icon: 'barbell-outline',
     name: 'RoutineScreen/index',
+    color: '#10b981',
   },
   {
     title: 'Respiración consciente',
-    icon: 'square-outline',
+    icon: 'leaf-outline',
     name: 'BreatheScreen/index',
+    color: '#14b8a6',
   },
   {
     title: 'Meditacion',
-    icon: 'square-outline',
+    icon: 'flower-outline',
     name: 'MeditationScreen/index',
+    color: '#a78bfa',
   },
   {
     title: 'Transforma tus Pensamientos',
-    icon: 'square-outline',
+    icon: 'chatbubble-ellipses-outline',
     name: 'ThoughtsScreen/index',
+    color: '#6366f1',
   },
   {
     title: 'Pausa Activa',
-    icon: 'square-outline',
+    icon: 'walk-outline',
     name: 'ActivePauseScreen/index',
+    color: '#0ea5e9',
+  },
+  {
+    title: 'Diario de gratitud',
+    icon: 'journal-outline',
+    name: 'GratitudeScreen/index',
+    color: '#eab308',
+  },
+  {
+    title: 'Higiene del sueño',
+    icon: 'moon-outline',
+    name: 'SleepScreen/index',
+    color: '#a78bfa',
   },
 ]
 // export const uiMenuRoutes: MenuRoute[] = [

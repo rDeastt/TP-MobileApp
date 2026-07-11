@@ -1,5 +1,6 @@
 import { View, Image, Animated, Pressable, PressableProps, ImageSourcePropType } from 'react-native';
 import { useRef, useEffect } from 'react'
+import Reanimated, { FadeInDown } from 'react-native-reanimated';
 
 
 interface Props extends PressableProps{
@@ -30,18 +31,20 @@ const ThemedAvatar = ({ source, onPress, animate = false }:Props) => {
 
   return (
     <Pressable onPress={onPress}>
-      <View className="items-center justify-center">
-        <Animated.View
-          className="w-40 h-40 overflow-hidden"
-          style={{ transform: [{ scale: scaleAnim }] }}
-        >
-          <Image
-            source={source}
-            className="w-40 h-40"
-            resizeMode="contain"
-          />
-        </Animated.View>
-      </View>
+      <Reanimated.View entering={FadeInDown.duration(400)}>
+        <View className="items-center justify-center">
+          <Animated.View
+            className="w-40 h-40 overflow-hidden"
+            style={{ transform: [{ scale: scaleAnim }] }}
+          >
+            <Image
+              source={source}
+              className="w-40 h-40"
+              resizeMode="contain"
+            />
+          </Animated.View>
+        </View>
+      </Reanimated.View>
     </Pressable>
   )
 }

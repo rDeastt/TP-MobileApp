@@ -10,7 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import "../global.css"
 import { SurveyProvider } from '@/hooks/SurveyContext';
 import { Test } from '@/constants/Routes';
-import { StatusBar } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
 
 import 'react-native-get-random-values';
@@ -36,7 +36,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SurveyProvider>
-        <StatusBar backgroundColor="#F3F3F3" />
+        <StatusBar style="auto" />
           <Stack screenOptions={{headerShown:false}}>
                 {
                     Test.map(route =>(

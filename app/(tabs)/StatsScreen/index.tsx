@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Dimensions, ScrollView, View, Text } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
+import { useFocusEffect } from 'expo-router';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ThemedView from '@/components/shared/ThemedView';
-import { HistoryItem, STORAGE_KEY } from '@/components/shared/burnoutHistory';
+import Screen from '@/components/shared/Screen';
+import { HistoryItem, STORAGE_KEY } from '@/services/burnoutHistory';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
 const { width } = Dimensions.get('window');
 
@@ -28,26 +31,33 @@ const friendlyNames: Record<string, string> = {
 const StatsScreen = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [positiveFactors, setPositiveFactors] = useState<string[]>([]);
+  const scheme = useColorScheme() ?? 'light';
+  const palette = Colors[scheme];
 
-  useEffect(() => {
-    (async () => {
-      const raw = await AsyncStorage.getItem(STORAGE_KEY);
-      if (raw) {
+  useFocusEffect(
+    useCallback(() => {
+      let alive = true;
+      (async () => {
+        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        if (!raw || !alive) return;
         const parsed: HistoryItem[] = JSON.parse(raw);
         setHistory(parsed);
 
         const last = parsed[parsed.length - 1];
         if (last?.factores) {
           const factoresPositivos = last.factores
-            .filter((f: any) => f.impacto_modelo > 0)
-            .sort((a: any, b: any) => b.impacto_modelo - a.impacto_modelo)
-            .map((f: any) => friendlyNames[f.variable] || f.variable);
+            .filter((f) => f.impacto_modelo > 0)
+            .sort((a, b) => b.impacto_modelo - a.impacto_modelo)
+            .map((f) => friendlyNames[f.variable] || f.variable);
 
           setPositiveFactors(factoresPositivos);
         }
-      }
-    })();
-  }, []);
+      })();
+      return () => {
+        alive = false;
+      };
+    }, []),
+  );
 
   const points = history.map((h) => ({
     value: h.probability,
@@ -66,63 +76,69 @@ const StatsScreen = () => {
   };
 
   return (
-    <ThemedView margin className="flex-1">
+    <Screen>
       <ScrollView contentContainerClassName="px-4 pb-8" showsVerticalScrollIndicator={false}>
-        <Text className="text-3xl font-bold text-center my-4">Historial de Burnout</Text>
+        <Text className="text-3xl font-bold text-center my-4 text-content dark:text-content-dark">
+          Historial de Burnout
+        </Text>
 
         {points.length >= 2 ? (
           <>
-            <Text className="text-base text-gray-500 ml-2 mb-1">Porcentaje (%)</Text>
+            <Text className="text-base text-muted dark:text-muted-dark ml-2 mb-1">
+              Porcentaje (%)
+            </Text>
 
             <LineChart
               areaChart
               curved
               data={points}
               thickness={2}
-              color="#3B82F6"
+              color={palette.chartLine}
               startFillColor={getEndColor()}
               endFillColor="rgba(34,197,94,0.15)"
               hideRules
               hideDataPoints
-              yAxisTextStyle={{ color: '#64748b' }}
-              xAxisLabelTextStyle={{ color: '#64748b', fontSize: 10 }}
+              yAxisTextStyle={{ color: palette.chartAxis }}
+              xAxisLabelTextStyle={{ color: palette.chartAxis, fontSize: 10 }}
               height={220}
               width={width - 32}
               yAxisLabelWidth={40}
             />
 
-            <Text className="text-sm text-center text-gray-500 mt-1">Fechas</Text>
+            <Text className="text-sm text-center text-muted dark:text-muted-dark mt-1">
+              Fechas
+            </Text>
 
-            <View className="mt-6 bg-cards rounded-xl p-4">
-              <Text className="font-semibold text-lg mb-2 text-blue-800">Resumen:</Text>
-              <Text className="text-gray-700">Primer registro: {first}%</Text>
-              <Text className="text-gray-700">Último registro: {last}%</Text>
-              <Text className="mt-2 text-gray-500 text-sm">
+            <View className="mt-6 bg-cards dark:bg-cards-dark rounded-xl p-4">
+              <Text className="font-semibold text-lg mb-2 text-blue-800 dark:text-blue-300">
+                Resumen:
+              </Text>
+              <Text className="text-gray-700 dark:text-gray-300">Primer registro: {first}%</Text>
+              <Text className="text-gray-700 dark:text-gray-300">Último registro: {last}%</Text>
+              <Text className="mt-2 text-muted dark:text-muted-dark text-sm">
                 *Un porcentaje menor indica menor riesgo de burnout.
               </Text>
             </View>
-
-
           </>
         ) : (
           <View className="flex-1 items-center justify-center mt-20">
-            <Text className="text-gray-500 text-center">
+            <Text className="text-muted dark:text-muted-dark text-center">
               Realiza al menos dos test para ver tu progreso.
             </Text>
           </View>
         )}
-          {positiveFactors.length > 0 && (
-            <View className="mt-6 bg-cards rounded-xl p-4">
-              <Text className="font-semibold text-lg mb-2 text-blue-800">
-                Lo que más te está afectando actualmente:
-              </Text>
-              {positiveFactors.map((item, idx) => (
-                <Text key={idx} className="text-gray-700">• {item}</Text>
-              ))}
-            </View>
-          )}
+        {positiveFactors.length > 0 && (
+          <View className="mt-6 bg-cards dark:bg-cards-dark rounded-xl p-4">
+            <Text className="font-semibold text-lg mb-2 text-blue-800 dark:text-blue-300">
+              Lo que más te está afectando actualmente:
+            </Text>
+            {positiveFactors.map((item, idx) => (
+              <Text key={idx} className="text-gray-700 dark:text-gray-300">• {item}</Text>
+            ))}
+          </View>
+        )}
       </ScrollView>
-    </ThemedView>
+    </Screen>
   );
 };
 

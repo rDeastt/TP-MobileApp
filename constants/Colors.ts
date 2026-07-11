@@ -1,36 +1,38 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Colores usados desde JS (StatusBar, NavigationBar, tab bar, gráficos).
+ * Deben espejar los tokens de tailwind.config.js: surface/card/content/muted/main/secondary.
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const tintColorLight = '#4ADF86';
+const tintColorDark = '#4ADF86';
 
 export const Colors = {
   light: {
     text: '#11181C',
+    textMuted: '#687076',
     background: '#F3F3F3',
+    card: '#FFFFFF',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    tabBar: '#78B4FF',
+    chartLine: '#4ADF86',
+    chartAxis: '#687076',
   },
   dark: {
-    text: '#11181C',
-    background: '#F3F3F3',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: '#ECEDEE',
+    textMuted: '#9BA1A6',
+    background: '#0F1218',
+    card: '#1B212B',
+    tint: tintColorDark,
+    icon: '#9BA1A6',
+    tabIconDefault: '#9BA1A6',
+    tabIconSelected: tintColorDark,
+    tabBar: '#1B212B',
+    chartLine: '#4ADF86',
+    chartAxis: '#9BA1A6',
   },
-  // dark: {
-  //   text: '#ECEDEE',
-  //   background: '#151718',
-  //   tint: tintColorDark,
-  //   icon: '#9BA1A6',
-  //   tabIconDefault: '#9BA1A6',
-  //   tabIconSelected: tintColorDark,
-  // },
 };
 
 /* Tabla central de colores para tarjetas de recomendación */

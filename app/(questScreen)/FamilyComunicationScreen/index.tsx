@@ -5,7 +5,8 @@ import SpeechBubble from '@/components/questions/SpeechBubble';
 import ThemedAvatar from '@/components/questions/ThemedAvatar';
 import ThemedButton from '@/components/shared/ThemedButton';
 import { useSurvey } from '@/hooks/SurveyContext';
-import ScaleSelector from '@/components/shared/ScaleSlector';
+import ScaleSelector from '@/components/shared/ScaleSelector';
+import QuestHeader from '@/components/questions/QuestHeader';
 
 const FamilyComunicationScreen = () => {
   const { responses, updateResponse } = useSurvey();
@@ -13,11 +14,7 @@ const FamilyComunicationScreen = () => {
   return (
     <ThemedView margin className="flex-1 justify-between">
       <View className="flex-1 mt-5">
-        <View className="items-center mb-2">
-          <Text className="font-semibold text-lg text-gray-500">4/6</Text>
-          <Text className="text-3xl font-bold text-black">Dinámica y apoyo familiar</Text>
-          <Text className="text-base text-gray-400">Completa los campos para poder ayudarte</Text>
-        </View>
+        <QuestHeader title="Dinámica y apoyo familiar" subtitle="Completa los campos para poder ayudarte" />
 
         <View className='justify-center flex-1 mb-10'>
           <SpeechBubble text="¿Consideras que la comunicación en tu familia es efectiva y abierta?" source="Grace" />

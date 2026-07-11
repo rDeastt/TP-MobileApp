@@ -2,27 +2,31 @@ import React, { useEffect } from 'react'
 import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import * as NavigationBar from 'expo-navigation-bar';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
 
 const TabsLayout = () => {
+  const scheme = useColorScheme() ?? 'light';
+  const palette = Colors[scheme];
 
   useEffect(() => {
     // Cambia el color de la barra de navegación inferior en Android
-    NavigationBar.setBackgroundColorAsync('#78B4FF');
+    NavigationBar.setBackgroundColorAsync(palette.tabBar);
 
     // Asegura contraste suficiente
-    NavigationBar.setButtonStyleAsync('dark'); // o 'light' si el fondo es oscuro
-  }, []);
+    NavigationBar.setButtonStyleAsync(scheme === 'dark' ? 'light' : 'dark');
+  }, [scheme, palette.tabBar]);
 
   return (
     <Tabs
         screenOptions={{
-            tabBarActiveTintColor: 'white',
-            // headerShown: false,
+            tabBarActiveTintColor: scheme === 'dark' ? palette.tint : 'white',
+            tabBarInactiveTintColor: scheme === 'dark' ? palette.tabIconDefault : '#E7F0FF',
             tabBarStyle: {
-              backgroundColor: '#78B4FF',
+              backgroundColor: palette.tabBar,
+              borderTopWidth: 0,
             },
-            // tabBarActiveBackgroundColor: 'red',
         }}
       >
 
@@ -36,14 +40,14 @@ const TabsLayout = () => {
             ),
             }}
         />
-      
+
         <Tabs.Screen
         name="(tools)"
         options={{
           title: 'Herramientas',
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons size={28} name="person-add-outline" color={color} />
+            <Ionicons size={28} name="construct-outline" color={color} />
           ),
         }}
         />

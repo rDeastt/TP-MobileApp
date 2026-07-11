@@ -6,6 +6,7 @@ import ThemedAvatar from '@/components/questions/ThemedAvatar';
 import ThemedButton from '@/components/shared/ThemedButton';
 import { useSurvey } from '@/hooks/SurveyContext';
 import DoubleOptionPicker from '@/components/questions/DoubleOptionPicker';
+import QuestHeader from '@/components/questions/QuestHeader';
 
 const SmokeScreen = () => {
   const { responses, updateResponse } = useSurvey();
@@ -13,11 +14,7 @@ const SmokeScreen = () => {
   return (
     <ThemedView margin className="flex-1 justify-between">
       <View className="flex-1 mt-5">
-        <View className="items-center mb-2">
-          <Text className="font-semibold text-lg text-gray-500">3/6</Text>
-          <Text className="text-3xl font-bold text-black text-center">Estilo de vida y responsabilidades</Text>
-          <Text className="text-base text-gray-400">Completa los campos para poder ayudarte</Text>
-        </View>
+        <QuestHeader title="Estilo de vida y responsabilidades" subtitle="Completa los campos para poder ayudarte" />
 
         <View className='items-center justify-center flex-1 mb-10'>
           <SpeechBubble text="Se honesto, ¿fumas bastante?" source="Lina" />

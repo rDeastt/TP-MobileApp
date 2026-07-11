@@ -1,17 +1,19 @@
-import { View, Text, TextInput } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
 import { useSurvey } from '@/hooks/SurveyContext';
 import SpeechBubble from '@/components/questions/SpeechBubble';
 import ThemedButton from '@/components/shared/ThemedButton';
+import ThemedTextInput from '@/components/shared/ThemedTextInput';
 import ThemedAvatar from '@/components/questions/ThemedAvatar';
 import ThemedView from '@/components/shared/ThemedView';
+import QuestHeader from '@/components/questions/QuestHeader';
 
 const LETTERS = "A-Za-zÁÉÍÓÚÜÑáéíóúüñ";
 
-const hasThreeLettersInRow = (s) =>
+const hasThreeLettersInRow = (s: string) =>
   new RegExp(`[${LETTERS}]{3,}`).test(s);
 
-const sanitizeName = (raw) => {
+const sanitizeName = (raw: string) => {
   if (!raw) return "";
 
   // 1) Permitir solo letras y espacio
@@ -31,7 +33,7 @@ const NameScreen = () => {
   const { responses, updateResponse } = useSurvey();
   const nombre = responses?.nombre || "";
 
-  const handleChange = (text) => {
+  const handleChange = (text: string) => {
     const cleaned = sanitizeName(text);
     updateResponse("nombre", cleaned);
   };
@@ -41,13 +43,7 @@ const NameScreen = () => {
   return (
     <ThemedView margin className="flex-1 justify-between">
       <View className="flex-1 mt-5">
-        <View className="items-center mb-2">
-          <Text className="font-semibold text-lg text-gray-500">1/6</Text>
-          <Text className="text-3xl font-bold text-black">Información Personal</Text>
-          <Text className="text-base text-gray-400">
-            Completa los campos para poder ayudarte
-          </Text>
-        </View>
+        <QuestHeader title="Información Personal" subtitle="Completa los campos para poder ayudarte" />
 
         <View className="items-center justify-center flex-1 pb-10">
           <SpeechBubble
@@ -59,8 +55,7 @@ const NameScreen = () => {
             animate
           />
 
-          <TextInput
-            className="border p-2 rounded-full my-4 w-11/12 bg-white"
+          <ThemedTextInput
             placeholder="Escribe tu nombre"
             value={nombre}
             onChangeText={handleChange}

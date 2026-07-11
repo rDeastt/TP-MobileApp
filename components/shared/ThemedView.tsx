@@ -19,7 +19,8 @@ const ThemedView = ({
     children,
 }:Props) => { 
 
-  const backgroundColor= bgColor ?? useThemeColor({},'background')
+  const themeBackground = useThemeColor({}, 'background')
+  const backgroundColor = bgColor ?? themeBackground
   const safeArea = useSafeAreaInsets();
 
   return (

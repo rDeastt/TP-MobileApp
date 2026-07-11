@@ -6,6 +6,7 @@ import ThemedButton from '@/components/shared/ThemedButton';
 import ThemedAvatar from '@/components/questions/ThemedAvatar';
 import ThemedView from '@/components/shared/ThemedView';
 import ThemedTextInput from '@/components/shared/ThemedTextInput';
+import QuestHeader from '@/components/questions/QuestHeader';
 
 const AgeScreen = () => {
   const { responses, updateResponse } = useSurvey();
@@ -13,11 +14,7 @@ const AgeScreen = () => {
   return (
     <ThemedView margin className="flex-1 justify-between">
       <View className="flex-1 mt-5">
-        <View className="items-center mb-2">
-          <Text className="font-semibold text-lg text-gray-500">1/6</Text>
-          <Text className="text-3xl font-bold text-black">Informacion Personal</Text>
-          <Text className="text-base text-gray-400">Completa los campos para poder ayudarte</Text>
-        </View>
+        <QuestHeader title="Informacion Personal" subtitle="Completa los campos para poder ayudarte" />
 
         <View className='items-center justify-center flex-1 mb-5'>
           <SpeechBubble text="Genial, y ahora dime, ¿cuántos años tienes?" source="Buno" />

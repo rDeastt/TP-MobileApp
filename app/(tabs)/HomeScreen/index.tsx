@@ -1,57 +1,82 @@
-import { View, Text, ScrollView, Pressable } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import RecommendationCard from '@/components/shared/RecomendationCard';
-import ThemedView from '@/components/shared/ThemedView';
+import Screen from '@/components/shared/Screen';
 import { recommendations as rawRecommendations, BurnoutLevel } from '@/constants/recomendations';
 import CardDescription from '@/components/shared/CardDescription';
-import { clearHistory, getLastProbability, getLastUserName, getRiskInfo } from '@/components/shared/burnoutHistory';
+import { getLastProbability, getLastUserName, getRiskInfo } from '@/services/burnoutHistory';
+import { getStreak } from '@/services/activityLog';
 import LastPredictionCard from '@/components/shared/LastPredictionCard';
 import { colorRecomendationPalette } from '@/constants/Colors';
 import phrases from '@/constants/motivationalPhrases';
+
 const HomeScreen = () => {
-  const [phrase, setPhrase] = useState('');
+  const [phrase] = useState(() => phrases[Math.floor(Math.random() * phrases.length)]);
   const [active, setActive] = useState<number | null>(null);
-  const [risk,   setRisk]   = useState<BurnoutLevel>('moderate');
+  const [risk, setRisk] = useState<BurnoutLevel>('moderate');
   const [percent, setPercent] = useState<number | null>(null);
-  const [name, setName] = useState<string | null>("User");
+  const [name, setName] = useState<string | null>('User');
+  const [streak, setStreak] = useState(0);
 
-  /* Obtener nivel y porcentaje solo una vez */
-  useEffect(() => {
-    (async () => {
-      const [level, p, name] = await Promise.all([getRiskInfo(), getLastProbability(), getLastUserName()]);
-      setRisk(level);
-      setPercent(p);
-      setName(name);
-    })();
-  }, []);
+  /* Refresca datos cada vez que la pantalla gana foco */
+  useFocusEffect(
+    useCallback(() => {
+      let alive = true;
+      (async () => {
+        const [level, p, lastName, s] = await Promise.all([
+          getRiskInfo(),
+          getLastProbability(),
+          getLastUserName(),
+          getStreak(),
+        ]);
+        if (!alive) return;
+        setRisk(level);
+        setPercent(p);
+        setName(lastName);
+        setStreak(s);
+      })();
+      return () => {
+        alive = false;
+      };
+    }, []),
+  );
 
-  useEffect(() => {
-    const random = phrases[Math.floor(Math.random() * phrases.length)];
-    setPhrase(random);
-  }, []);
   const recs = rawRecommendations.filter((rec) => rec.level === risk);
 
   return (
-    <ThemedView>
-      {/* Tarjeta resumen de la última predicción */}
-      <View className="px-4 mt-10 mb-2">
-        <Text className="text-3xl font-bold text-black">Bienvenido {name}</Text>
-        <Text className='my-2'> ✨ Cree en ti mismo y todo será posible ✨</Text>
-        <LastPredictionCard
-          percentage={percent}
-          bgColor='bg-secondary'
-        />
+    <Screen scroll className="pb-8">
+      <View className="px-4 mt-6 mb-2">
+        <View className="flex-row items-center justify-between">
+          <Text className="flex-1 text-3xl font-bold text-content dark:text-content-dark">
+            Hola, {name} 👋
+          </Text>
+          {streak > 0 && (
+            <View className="flex-row items-center bg-orange-100 dark:bg-orange-950 px-3 py-1.5 rounded-full">
+              <Ionicons name="flame" size={18} color="#f97316" />
+              <Text className="ml-1 font-bold text-orange-500">{streak}</Text>
+            </View>
+          )}
+        </View>
+        <Text className="my-2 text-muted dark:text-muted-dark">
+          ✨ Cree en ti mismo y todo será posible ✨
+        </Text>
 
-        <Text className="text-3xl font-bold text-black">Tus Recomendaciones</Text>
+        <LastPredictionCard percentage={percent} />
+
+        <Text className="text-2xl font-bold text-content dark:text-content-dark mt-2">
+          Tus recomendaciones
+        </Text>
       </View>
 
       {/* Tarjetas pequeñas scroll horizontal */}
-      <ScrollView         
+      <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         className="mt-4 px-2"
         contentContainerStyle={{ paddingHorizontal: 4 }}
-        >
+      >
         {recs.map((rec, idx) => (
           <RecommendationCard
             key={rec.id}
@@ -74,10 +99,11 @@ const HomeScreen = () => {
           onClose={() => setActive(null)}
         />
       )}
-      <View className="items-center mt-10 mb-6 px-6 ">
-        <Text className="text-center text-gray-600 italic text-xl">{phrase}</Text>
+
+      <View className="items-center mt-10 mb-6 px-6">
+        <Text className="text-center text-muted dark:text-muted-dark italic text-xl">{phrase}</Text>
       </View>
-    </ThemedView>
+    </Screen>
   );
 };
 

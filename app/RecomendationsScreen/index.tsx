@@ -1,10 +1,10 @@
-import {Text, ScrollView, View } from 'react-native'
+import { Text, ScrollView, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import ThemedView from '@/components/shared/ThemedView';
+import Screen from '@/components/shared/Screen';
 import CardDescription from '@/components/shared/CardDescription';
 import RecommendationCard from '@/components/shared/RecomendationCard';
 import { recommendations as rawRecommendations, BurnoutLevel } from '@/constants/recomendations';
-import { getRiskInfo } from '@/components/shared/burnoutHistory';
+import { getRiskInfo } from '@/services/burnoutHistory';
 import ThemedButton from '@/components/shared/ThemedButton';
 import { colorRecomendationPalette } from '@/constants/Colors';
 
@@ -23,8 +23,10 @@ const RecomendationsScreen = () => {
 
 
   return (
-    <ThemedView className='flex-1 ustify-center'>
-        <Text className="text-3xl font-bold text-center mt-4">Recomendaciones</Text>
+    <Screen className='justify-center'>
+        <Text className="text-3xl font-bold text-center mt-4 text-content dark:text-content-dark">
+          Recomendaciones
+        </Text>
         {/* Tarjetas grandes */}
         <ScrollView className="mt-4 px-4">
         {recommendations.map((rec, idx) => (
@@ -55,9 +57,9 @@ const RecomendationsScreen = () => {
                 Pagina Principal
             </ThemedButton>
         </View>
-    </ThemedView>
+    </Screen>
 );
-  
+
 }
 
 export default RecomendationsScreen

@@ -1,16 +1,21 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import React, { useRef, useState, useEffect } from 'react';
-import { Audio } from 'expo-av';
-import { useSurvey } from '@/hooks/SurveyContext';
-import ThemedView from '@/components/shared/ThemedView';
+import { View, Text, Image } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import * as Haptics from 'expo-haptics';
+import Screen from '@/components/shared/Screen';
+import ThemedButton from '@/components/shared/ThemedButton';
+import ProgressRing from '@/components/shared/ProgressRing';
 import SpeechBubble from '@/components/questions/SpeechBubble';
 import ThemedAvatar from '@/components/questions/ThemedAvatar';
+import { useCountdown } from '@/hooks/useCountdown';
+import { useSound } from '@/hooks/useSound';
+import { SOUNDS } from '@/constants/sounds';
+import { logCompletion } from '@/services/activityLog';
 
 type Exercise = {
   id: string;
   name: string;
   image: any;
-  duration: number;
   cue: string;
 };
 
@@ -18,122 +23,118 @@ const routine: Exercise[] = [
   {
     id: 'march',
     name: 'Marcha suave en el lugar',
-    image: require('../../../../assets/avatars/marcha.png'),
-    duration: 30000,
+    image: require('../../../../assets/workout/marcha.gif'),
     cue: 'Nota cómo se elevan tus rodillas y coordina la respiración con el ritmo.',
   },
   {
     id: 'squat',
     name: 'Sentadillas lentas',
     image: require('../../../../assets/avatars/sentadilla.png'),
-    duration: 30000,
     cue: 'Siente el peso en tus talones y observa la tensión en los cuádriceps.',
   },
   {
     id: 'arm',
     name: 'Círculos de brazos',
     image: require('../../../../assets/avatars/brazos-circulo.png'),
-    duration: 30000,
     cue: 'Inhala al llevar los brazos arriba y exhala al bajarlos, notando los hombros.',
   },
 ];
 
+const EXERCISE_SECONDS = 30;
+const REST_SECONDS = 5;
+const PREPARE_SECONDS = 5;
+
+type Step =
+  | { kind: 'prepare'; seconds: number }
+  | { kind: 'exercise'; seconds: number; exercise: Exercise; number: number }
+  | { kind: 'rest'; seconds: number };
+
+const buildSteps = (): Step[] => {
+  const steps: Step[] = [{ kind: 'prepare', seconds: PREPARE_SECONDS }];
+  routine.forEach((exercise, i) => {
+    steps.push({ kind: 'exercise', seconds: EXERCISE_SECONDS, exercise, number: i + 1 });
+    if (i < routine.length - 1) steps.push({ kind: 'rest', seconds: REST_SECONDS });
+  });
+  return steps;
+};
+
 const RoutineScreen = () => {
-  const { updateResponse } = useSurvey();
+  const [mode, setMode] = useState<'intro' | 'session' | 'done'>('intro');
+  const [stepIdx, setStepIdx] = useState(0);
 
-  const [idx, setIdx] = useState<number>(-1);
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [isResting, setIsResting] = useState<boolean>(false);
-  const [isStarting, setIsStarting] = useState<boolean>(false);
-  const interval = useRef<ReturnType<typeof setInterval> | null>(null);
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stepsRef = useRef<Step[]>([]);
+  const stepIdxRef = useRef(0);
 
-  const isRunning = idx >= 0 && idx < routine.length;
+  const transitionSound = useSound(SOUNDS.timer);
+  const successSound = useSound(SOUNDS.success);
 
-  const clearTimers = () => {
-    if (interval.current) clearInterval(interval.current);
-    if (timeout.current) clearTimeout(timeout.current);
-    interval.current = null;
-    timeout.current = null;
-  };
-
-  const playSound = async (source: any) => {
-    const { sound } = await Audio.Sound.createAsync(source);
-    await sound.playAsync();
-    // Liberar recursos al terminar
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if ((status as any).didJustFinish) {
-        sound.unloadAsync();
-      }
-    });
-  };
-
-  useEffect(() => clearTimers, []);
-
-  const startExercise = (pos: number) => {
-    clearTimers();
-    setIsResting(false);
-    setIdx(pos);
-    const ex = routine[pos];
-    setTimeLeft(ex.duration / 1000);
-
-    interval.current = setInterval(() => setTimeLeft((t) => t - 1), 1000);
-
-    timeout.current = setTimeout(() => {
-      clearTimers();
-      if (pos < routine.length - 1) {
-        setIsResting(true);
-        setTimeLeft(5);
-        playSound(require('../../../../assets/sounds/timer.mp3'));
-        interval.current = setInterval(() => setTimeLeft((t) => t - 1), 1000);
-        timeout.current = setTimeout(() => {
-          setIsResting(false);
-          startExercise(pos + 1);
-        }, 5000);
+  const countdown = useCountdown({
+    onComplete: () => {
+      const next = stepIdxRef.current + 1;
+      if (next < stepsRef.current.length) {
+        runStep(next);
       } else {
-        setIdx(routine.length);
-        updateResponse('finishedSimpleWorkout' as any, true);
-        playSound(require('../../../../assets/sounds/success.mp3'));
+        finish();
       }
-    }, ex.duration);
+    },
+  });
+
+  const runStep = (idx: number) => {
+    const step = stepsRef.current[idx];
+    stepIdxRef.current = idx;
+    setStepIdx(idx);
+    if (step.kind !== 'exercise') transitionSound.play();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    countdown.start(step.seconds);
+  };
+
+  const startRoutine = () => {
+    stepsRef.current = buildSteps();
+    setMode('session');
+    runStep(0);
+  };
+
+  const finish = () => {
+    setMode('done');
+    successSound.play();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    logCompletion('routine');
   };
 
   const stopRoutine = () => {
-    clearTimers();
-    setIdx(-1);
-    setTimeLeft(0);
-    setIsResting(false);
-    setIsStarting(false);
+    countdown.stop();
+    setMode('intro');
+    setStepIdx(0);
   };
 
-  const Btn = ({
-    text,
-    onPress,
-    color = 'bg-main',
-  }: {
-    text: string;
-    onPress: () => void;
-    color?: string;
-  }) => (
-    <TouchableOpacity
-      onPress={onPress}
-      className={`${color} px-6 py-3 rounded-full items-center w-full mb-5`}
-    >
-      <Text className="text-white font-semibold text-lg">{text}</Text>
-    </TouchableOpacity>
+  /* Al salir de la pantalla, volver al inicio (countdown y sonidos se
+     limpian solos con stopOnBlur/useSound). */
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setMode('intro');
+        setStepIdx(0);
+      };
+    }, []),
   );
 
+  const step = stepsRef.current[stepIdx];
+
   return (
-    <ThemedView margin className="flex-1 justify-between">
+    <Screen className="px-3 justify-between">
       {/* Cabecera */}
       <View className="items-center mt-5 mb-4">
-        <Text className="text-3xl font-bold">Rutina sencilla de ejercicio</Text>
-        <Text className="text-base text-gray-400">Activa tu cuerpo en minutos</Text>
+        <Text className="text-3xl font-bold text-content dark:text-content-dark">
+          Rutina sencilla de ejercicio
+        </Text>
+        <Text className="text-base text-muted dark:text-muted-dark">
+          Activa tu cuerpo en minutos
+        </Text>
       </View>
 
       {/* Contenido principal */}
       <View className="flex-1 items-center justify-center">
-        {idx === -1 && !isStarting && (
+        {mode === 'intro' && (
           <>
             <SpeechBubble
               text="El movimiento consciente mejora el ánimo y reduce el estrés. ¡Vamos a comenzar!"
@@ -143,45 +144,60 @@ const RoutineScreen = () => {
           </>
         )}
 
-        {isStarting && (
+        {mode === 'session' && step?.kind === 'prepare' && (
           <>
-            <Text className="text-2xl font-bold mb-4 text-center">🧘 Prepárate</Text>
-            <Text className="text-lg text-gray-600 mb-4">{timeLeft}s</Text>
-            <Text className="text-center text-gray-700 italic px-6 text-lg">
+            <Text className="text-2xl font-bold mb-4 text-center text-content dark:text-content-dark">
+              🧘 Prepárate
+            </Text>
+            <Text className="text-lg text-muted dark:text-muted-dark mb-4">
+              {countdown.secondsLeft}s
+            </Text>
+            <Text className="text-center text-gray-700 dark:text-gray-300 italic px-6 text-lg">
               Vamos a comenzar con movimiento consciente. Mantente presente.
             </Text>
           </>
         )}
 
-        {isRunning && !isResting && (
+        {mode === 'session' && step?.kind === 'exercise' && (
           <>
-            <Text className="text-2xl font-bold mb-4">{routine[idx].name}</Text>
-            <Image
-              source={routine[idx].image}
-              className="w-48 h-48 mb-6"
-              resizeMode="contain"
-            />
-            <Text className="text-lg text-gray-600 mb-8">{timeLeft}s</Text>
-            <Text className="text-center text-gray-700 italic px-6 text-lg">
-              {routine[idx].cue}
+            <Text className="text-xl font-bold mb-1 text-content dark:text-content-dark">
+              {step.exercise.name}
             </Text>
-            <View className="mt-12 w-56">
-              <Btn text="Detener" onPress={stopRoutine} color="bg-[#f472b6]" />
+            <Text className="text-sm text-muted dark:text-muted-dark mb-4">
+              Ejercicio {step.number}/{routine.length}
+            </Text>
+            <ProgressRing progress={countdown.progress} size={220} strokeWidth={8}>
+              <Image source={step.exercise.image} className="w-44 h-44" resizeMode="contain" />
+            </ProgressRing>
+            <Text className="text-lg text-muted dark:text-muted-dark my-4">
+              {countdown.secondsLeft}s
+            </Text>
+            <Text className="text-center text-gray-700 dark:text-gray-300 italic px-6">
+              {step.exercise.cue}
+            </Text>
+            <View className="mt-6 w-56">
+              <ThemedButton variant="ghost" onPress={stopRoutine}>
+                Detener
+              </ThemedButton>
             </View>
           </>
         )}
 
-        {isResting && (
+        {mode === 'session' && step?.kind === 'rest' && (
           <>
-            <Text className="text-2xl font-bold mb-4 text-center">🧘 Respira profundamente</Text>
-            <Text className="text-lg text-gray-600 mb-4">{timeLeft}s</Text>
-            <Text className="text-center text-gray-700 italic px-6 text-lg">
+            <Text className="text-2xl font-bold mb-4 text-center text-content dark:text-content-dark">
+              🧘 Respira profundamente
+            </Text>
+            <Text className="text-lg text-muted dark:text-muted-dark mb-4">
+              {countdown.secondsLeft}s
+            </Text>
+            <Text className="text-center text-gray-700 dark:text-gray-300 italic px-6 text-lg">
               Prepara tu cuerpo y mente para el siguiente ejercicio.
             </Text>
           </>
         )}
 
-        {idx === routine.length && (
+        {mode === 'done' && (
           <>
             <SpeechBubble
               text="¡Excelente! Ejercitarte brevemente aumenta tu energía y concentración."
@@ -193,31 +209,18 @@ const RoutineScreen = () => {
       </View>
 
       {/* Botones inferiores */}
-      <View className="px-6 mb-6 space-y-5">
-        {idx === -1 && !isStarting && (
-          <Btn
-            text="Comenzar rutina"
-            onPress={() => {
-              setIsStarting(true);
-              setTimeLeft(5);
-              playSound(require('../../../../assets/sounds/timer.mp3'));
-              interval.current = setInterval(() => setTimeLeft((t) => t - 1), 1000);
-              timeout.current = setTimeout(() => {
-                clearTimers();
-                setIsStarting(false);
-                startExercise(0);
-              }, 5000);
-            }}
-          />
-        )}
-        {idx === routine.length && (
-          <>
-            <Btn text="Repetir" onPress={() => startExercise(0)} />
-            <Btn text="Regresar" onPress={stopRoutine} color="bg-[#f472b6]" />
-          </>
+      <View className="px-6 mb-6">
+        {mode === 'intro' && <ThemedButton onPress={startRoutine}>Comenzar rutina</ThemedButton>}
+        {mode === 'done' && (
+          <View className="gap-3">
+            <ThemedButton onPress={startRoutine}>Repetir</ThemedButton>
+            <ThemedButton variant="ghost" onPress={stopRoutine}>
+              Regresar
+            </ThemedButton>
+          </View>
         )}
       </View>
-    </ThemedView>
+    </Screen>
   );
 };
 

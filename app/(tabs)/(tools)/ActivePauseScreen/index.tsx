@@ -1,116 +1,186 @@
-import { View, Text, ScrollView, Image, Pressable } from 'react-native';
-import React, { useState } from 'react';
-import { Audio } from 'expo-av';
+import { View, Text, Image, Pressable } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import ThemedView from '@/components/shared/ThemedView';
-import { useFocusEffect } from '@react-navigation/native';
+import { router, useFocusEffect } from 'expo-router';
+import * as Haptics from 'expo-haptics';
+import Screen from '@/components/shared/Screen';
+import ThemedButton from '@/components/shared/ThemedButton';
+import ProgressRing from '@/components/shared/ProgressRing';
+import { useCountdown } from '@/hooks/useCountdown';
+import { useSound } from '@/hooks/useSound';
+import { SOUNDS } from '@/constants/sounds';
+import { logCompletion } from '@/services/activityLog';
+
+type Stretch = {
+  title: string;
+  detail: string;
+  image: any;
+};
+
+const stretches: Stretch[] = [
+  {
+    title: 'Estiramiento lateral de brazos',
+    detail: 'Mantén de 10 a 15 segundos por cada brazo.',
+    image: require('../../../../assets/screenImages/acti-1.png'),
+  },
+  {
+    title: 'Estiramiento de cuello',
+    detail:
+      'Inclina lentamente la cabeza hacia un lado, mantén por 10 segundos, y repite del otro lado. No te olvides de hacer giros suaves 👋',
+    image: require('../../../../assets/screenImages/acti-2.png'),
+  },
+  {
+    title: 'Rotación de hombros',
+    detail:
+      'Haz 10 círculos hacia atrás con los hombros, luego 10 hacia adelante. Inhala al levantar y exhala al bajar.',
+    image: require('../../../../assets/screenImages/acti-3.png'),
+  },
+];
+
+const STEP_SECONDS = 30;
 
 const ActivePauseScreen = () => {
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [isMuted, setIsMuted] = useState(false);
+  const [mode, setMode] = useState<'intro' | 'session' | 'done'>('intro');
+  const [stepIdx, setStepIdx] = useState(0);
+  const stepIdxRef = useRef(0);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      let isMounted = true;
-      let currentSound: Audio.Sound;
+  const music = useSound(SOUNDS.activePause, { loop: true });
 
-      const loadAndPlay = async () => {
-        const { sound } = await Audio.Sound.createAsync(
-          require('../../../../assets/sounds/active-pause.mp3'),
-          {
-            shouldPlay: true,
-            isLooping: true,
-            volume: 1.0,
-          }
-        );
-        currentSound = sound;
-        if (isMounted) setSound(sound);
-      };
+  const countdown = useCountdown({
+    onComplete: () => nextStep(),
+  });
 
-      loadAndPlay();
+  const runStep = (idx: number) => {
+    stepIdxRef.current = idx;
+    setStepIdx(idx);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    countdown.start(STEP_SECONDS);
+  };
 
-      return () => {
-        isMounted = false;
-        if (currentSound) {
-          currentSound.stopAsync();
-          currentSound.unloadAsync();
-        }
-      };
-    }, [])
-  );
-
-  const toggleMute = async () => {
-    if (sound) {
-      await sound.setIsMutedAsync(!isMuted);
-      setIsMuted(!isMuted);
+  const nextStep = () => {
+    const next = stepIdxRef.current + 1;
+    if (next < stretches.length) {
+      runStep(next);
+    } else {
+      finish();
     }
   };
 
+  const start = () => {
+    music.play();
+    setMode('session');
+    runStep(0);
+  };
+
+  const finish = () => {
+    countdown.stop();
+    music.stop();
+    setMode('done');
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    logCompletion('activePause');
+  };
+
+  /* Al salir de la pantalla se corta música y timer (useSound/useCountdown)
+     y la vista vuelve al inicio. */
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setMode('intro');
+        setStepIdx(0);
+      };
+    }, []),
+  );
+
+  const stretch = stretches[stepIdx];
+
   return (
-    <ThemedView margin className="flex-1 bg-white">
-      <ScrollView contentContainerClassName="items-center px-4 pb-10" showsVerticalScrollIndicator={false}>
-        <Text className="text-2xl font-bold text-center mt-6">Pausa Activa</Text>
-
-        <View className="items-center mt-1 mb-6">
-          <Text className="text-center text-gray-600">
-            🧳 Relájate con estos ejercicios simples mientras escuchas música suave 🎵
-          </Text>
-          <Pressable
-            onPress={toggleMute}
-            className="w-8 h-8 mt-2 bg-white rounded-full items-center justify-center shadow"
-          >
-            <Ionicons name={isMuted ? 'volume-mute' : 'volume-high'} size={20} color="black" />
-          </Pressable>
-        </View>
-
-        {/* Ejercicio 1 */}
-        <Image
-          source={require('../../../../assets/screenImages/acti-1.png')}
-          className="w-64 h-64 mb-4 rounded-2xl"
-          resizeMode="contain"
-        />
-        <Text className="text-center text-base text-black font-medium mb-6">
-          1. Estiramiento lateral de brazos. {'\n'}
-          <Text className="text-gray-700 font-normal">
-            Mantén de 10 a 15 segundos por cada brazo!
-          </Text>
+    <Screen className="px-4 justify-between">
+      <View className="items-center mt-6">
+        <Text className="text-2xl font-bold text-center text-content dark:text-content-dark">
+          Pausa Activa
         </Text>
-
-        {/* Ejercicio 2 */}
-        <Image
-          source={require('../../../../assets/screenImages/acti-2.png')}
-          className="w-64 h-64 mb-4 rounded-2xl"
-          resizeMode="contain"
-        />
-        <Text className="text-center text-base text-black font-medium mb-6">
-          2. Estiramiento de cuello {'\n'}
-          <Text className="text-gray-700 font-normal">
-            Inclina lentamente la cabeza hacia un lado, mantén por 10 segundos, y repite del otro lado. No te olvides de hacer giros suaves 👋
-          </Text>
+        <Text className="text-center text-muted dark:text-muted-dark mt-1">
+          🧳 Relájate con estos ejercicios simples mientras escuchas música suave 🎵
         </Text>
+      </View>
 
-        {/* Ejercicio 3 */}
-        <Image
-          source={require('../../../../assets/screenImages/acti-3.png')}
-          className="w-64 h-64 mb-4 rounded-2xl"
-          resizeMode="contain"
-        />
-        <Text className="text-center text-base text-black font-medium mb-8">
-          3. Rotación de hombros {'\n'}
-          <Text className="text-gray-700 font-normal">
-            Haz 10 círculos hacia atrás con los hombros, luego 10 hacia adelante. Inhala al levantar y exhala al bajar.
-          </Text>
-        </Text>
+      <View className="flex-1 items-center justify-center">
+        {mode === 'intro' && (
+          <>
+            <Image
+              source={stretches[0].image}
+              className="w-64 h-64 mb-6 rounded-2xl"
+              resizeMode="contain"
+            />
+            <Text className="text-center text-gray-700 dark:text-gray-300 px-6">
+              Te guiaré por {stretches.length} estiramientos de {STEP_SECONDS} segundos cada uno.
+              Solo sigue las instrucciones y respira.
+            </Text>
+          </>
+        )}
 
-        <Pressable
-          onPress={() => router.push('/ToolsScreen')}
-          className="w-full py-4 rounded-full bg-[#4ADF86] active:opacity-80"
-        >
-          <Text className="text-white font-semibold text-lg text-center">Listo!</Text>
-        </Pressable>
-      </ScrollView>
-    </ThemedView>
+        {mode === 'session' && (
+          <>
+            <View className="flex-row items-center mb-2">
+              <Text className="text-sm text-muted dark:text-muted-dark">
+                Estiramiento {stepIdx + 1}/{stretches.length}
+              </Text>
+              <Pressable
+                onPress={() => (music.isPlaying ? music.stop() : music.play())}
+                className="ml-3 w-8 h-8 bg-card dark:bg-card-dark rounded-full items-center justify-center"
+              >
+                <Ionicons
+                  name={music.isPlaying ? 'volume-high' : 'volume-mute'}
+                  size={18}
+                  color="#9BA1A6"
+                />
+              </Pressable>
+            </View>
+            <Text className="text-xl font-bold mb-4 text-center text-content dark:text-content-dark">
+              {stretch.title}
+            </Text>
+            <ProgressRing progress={countdown.progress} size={230} strokeWidth={8} color="#0ea5e9">
+              <Image source={stretch.image} className="w-48 h-48 rounded-2xl" resizeMode="contain" />
+            </ProgressRing>
+            <Text className="text-lg text-muted dark:text-muted-dark my-3">
+              {countdown.secondsLeft}s
+            </Text>
+            <Text className="text-center text-gray-700 dark:text-gray-300 px-6">
+              {stretch.detail}
+            </Text>
+            <View className="mt-4 w-56">
+              <ThemedButton variant="ghost" onPress={nextStep}>
+                Saltar
+              </ThemedButton>
+            </View>
+          </>
+        )}
+
+        {mode === 'done' && (
+          <>
+            <Text style={{ fontSize: 64, lineHeight: 80 }}>🎉</Text>
+            <Text className="text-2xl font-bold text-center mt-4 text-content dark:text-content-dark">
+              ¡Pausa completada!
+            </Text>
+            <Text className="text-center text-muted dark:text-muted-dark mt-2 px-8">
+              Tu cuerpo te lo agradece. Pequeñas pausas como esta previenen la fatiga acumulada.
+            </Text>
+          </>
+        )}
+      </View>
+
+      <View className="mb-8">
+        {mode === 'intro' && <ThemedButton onPress={start}>Comenzar</ThemedButton>}
+        {mode === 'done' && (
+          <View className="gap-3">
+            <ThemedButton variant="secondary" onPress={start}>
+              Repetir
+            </ThemedButton>
+            <ThemedButton onPress={() => router.push('/ToolsScreen')}>Listo!</ThemedButton>
+          </View>
+        )}
+      </View>
+    </Screen>
   );
 };
 
