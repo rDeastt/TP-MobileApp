@@ -167,6 +167,24 @@ export const Tools: MenuRoute[] = [
     name: 'SleepScreen/index',
     color: '#a78bfa',
   },
+  {
+    title: 'Descanso visual',
+    icon: 'paw-outline',
+    name: 'PetBreakScreen/index',
+    color: '#f472b6',
+  },
+  {
+    title: 'Pausa al aire libre',
+    icon: 'partly-sunny-outline',
+    name: 'OutdoorScreen/index',
+    color: '#eab308',
+  },
+  {
+    title: 'Check-in de ánimo',
+    icon: 'happy-outline',
+    name: 'MoodScreen/index',
+    color: '#14b8a6',
+  },
 ]
 // export const uiMenuRoutes: MenuRoute[] = [
 //   {

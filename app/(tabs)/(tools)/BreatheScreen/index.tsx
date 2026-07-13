@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import SpeechBubble from '@/components/questions/SpeechBubble';
 import ThemedAvatar from '@/components/questions/ThemedAvatar';
 import Screen from '@/components/shared/Screen';
@@ -161,7 +162,6 @@ const BreatheScreen = () => {
   );
 
   const step = stepsRef.current[stepIdx];
-  const cycleTxt = step && step.cycle > 0 ? ` (Ciclo ${step.cycle}/${TOTAL_CYCLES})` : '';
 
   return (
     <Screen className="px-3 justify-between">
@@ -224,19 +224,55 @@ const BreatheScreen = () => {
 
         {mode === 'session' && step && (
           <View className="items-center">
-            <Text className="text-2xl font-bold mb-4 text-content dark:text-content-dark">
+            <Text className="text-2xl font-bold mb-2 text-content dark:text-content-dark">
               {PHASE_LABEL[step.id]}
-              {cycleTxt}
             </Text>
-            <Text className="text-lg text-muted dark:text-muted-dark mb-10">
-              {countdown.secondsLeft}s
-            </Text>
+
+            {/* Dots de progreso por ciclo */}
+            <View className="flex-row mb-10">
+              {Array.from({ length: TOTAL_CYCLES }).map((_, i) => (
+                <View
+                  key={i}
+                  className={`w-2.5 h-2.5 rounded-full mx-1 ${
+                    i < step.cycle ? 'bg-main' : 'bg-gray-300 dark:bg-gray-600'
+                  }`}
+                />
+              ))}
+            </View>
+
+            {/* Círculo de respiración: halo + gradiente + contador */}
             <Animated.View
-              className="bg-secondary dark:bg-secondary-dark rounded-full items-center justify-center"
-              style={[{ width: 160, height: 160 }, circleStyle]}
+              style={[
+                {
+                  width: 210,
+                  height: 210,
+                  borderRadius: 105,
+                  padding: 15,
+                  backgroundColor: 'rgba(120,180,255,0.18)',
+                },
+                circleStyle,
+              ]}
             >
-              <Text className="text-white font-semibold text-xl">{PHASE_LABEL[step.id]}</Text>
+              <LinearGradient
+                colors={['#78B4FF', '#4ADF86']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  flex: 1,
+                  borderRadius: 90,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text className="text-white font-bold text-5xl" style={{ fontFamily: 'SpaceMono' }}>
+                  {countdown.secondsLeft}
+                </Text>
+                <Text className="text-white/90 font-semibold text-base mt-1">
+                  {PHASE_LABEL[step.id]}
+                </Text>
+              </LinearGradient>
             </Animated.View>
+
             <View className="mt-12 w-56">
               <ThemedButton variant="ghost" onPress={backToChoose}>
                 Detener

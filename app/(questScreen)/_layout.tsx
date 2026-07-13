@@ -1,11 +1,19 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router'
 import { questRoutes } from '@/constants/Routes'
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { Colors } from '@/constants/Colors'
 
 const QuestScreen = () => {
+  const scheme = useColorScheme() ?? 'light';
+
   return (
-    <Stack screenOptions={{headerShown:false}}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: Colors[scheme].background },
+      }}
+    >
     {
         questRoutes.map(route =>(
             <Stack.Screen
@@ -14,11 +22,11 @@ const QuestScreen = () => {
             options={{
                 title: route.title
               }}
-            />       
+            />
         ))
     }
     </Stack>
-    
+
   )
 }
 

@@ -10,7 +10,10 @@ export type ToolId =
   | 'activePause'
   | 'thoughts'
   | 'gratitude'
-  | 'sleep';
+  | 'sleep'
+  | 'petBreak'
+  | 'outdoor'
+  | 'mood';
 
 /** Mapa fecha (YYYY-MM-DD) → herramientas completadas ese día. */
 type ActivityLog = Record<string, ToolId[]>;

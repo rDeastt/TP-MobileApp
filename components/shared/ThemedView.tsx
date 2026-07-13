@@ -30,7 +30,8 @@ const ThemedView = ({
         backgroundColor: backgroundColor,
         flex:1,
         paddingTop: safe ? safeArea.top:0,
-        marginHorizontal: margin? 10:0
+        // padding (no margin) para que el fondo cubra todo el ancho
+        paddingHorizontal: margin? 10:0
       },
       style
     ]}

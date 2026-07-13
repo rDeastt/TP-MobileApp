@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text } from 'react-native';
+import HaloImage from '@/components/shared/HaloImage';
 import { useFocusEffect } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Screen from '@/components/shared/Screen';
@@ -89,7 +90,7 @@ const MeditationScreen = () => {
         </Text>
 
         <ProgressRing progress={done ? 1 : countdown.progress} size={260} strokeWidth={10}>
-          <Image source={image} className="w-48 h-48" resizeMode="contain" />
+          <HaloImage source={image} size={210} colors={['rgba(167,139,250,0.3)', 'rgba(120,180,255,0.12)']} />
         </ProgressRing>
 
         <Text

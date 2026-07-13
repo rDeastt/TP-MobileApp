@@ -109,8 +109,8 @@ const ActivePauseScreen = () => {
           <>
             <Image
               source={stretches[0].image}
-              className="w-64 h-64 mb-6 rounded-2xl"
-              resizeMode="contain"
+              style={{ width: 230, height: 230, borderRadius: 115 }}
+              resizeMode="cover"
             />
             <Text className="text-center text-gray-700 dark:text-gray-300 px-6">
               Te guiaré por {stretches.length} estiramientos de {STEP_SECONDS} segundos cada uno.
@@ -140,7 +140,11 @@ const ActivePauseScreen = () => {
               {stretch.title}
             </Text>
             <ProgressRing progress={countdown.progress} size={230} strokeWidth={8} color="#0ea5e9">
-              <Image source={stretch.image} className="w-48 h-48 rounded-2xl" resizeMode="contain" />
+              <Image
+                source={stretch.image}
+                style={{ width: 198, height: 198, borderRadius: 99 }}
+                resizeMode="cover"
+              />
             </ProgressRing>
             <Text className="text-lg text-muted dark:text-muted-dark my-3">
               {countdown.secondsLeft}s

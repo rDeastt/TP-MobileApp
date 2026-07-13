@@ -14,6 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 
 
 import 'react-native-get-random-values';
+import { Colors } from '@/constants/Colors';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -37,7 +38,12 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SurveyProvider>
         <StatusBar style="auto" />
-          <Stack screenOptions={{headerShown:false}}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: Colors[colorScheme ?? 'light'].background },
+            }}
+          >
                 {
                     Test.map(route =>(
                         <Stack.Screen

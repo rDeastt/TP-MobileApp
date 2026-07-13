@@ -17,6 +17,9 @@ const TOOL_IDS: Record<string, ToolId> = {
   ActivePauseScreen: 'activePause',
   GratitudeScreen: 'gratitude',
   SleepScreen: 'sleep',
+  PetBreakScreen: 'petBreak',
+  OutdoorScreen: 'outdoor',
+  MoodScreen: 'mood',
 };
 
 const DAY_LETTERS = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];

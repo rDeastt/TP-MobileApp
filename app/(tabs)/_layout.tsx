@@ -46,6 +46,8 @@ const TabsLayout = () => {
         options={{
           title: 'Herramientas',
           headerShown: false,
+          // Al salir de la pestaña, el stack vuelve a la lista de herramientas
+          popToTopOnBlur: true,
           tabBarIcon: ({ color }) => (
             <Ionicons size={28} name="construct-outline" color={color} />
           ),

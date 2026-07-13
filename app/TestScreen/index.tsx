@@ -11,8 +11,8 @@ import { getUserId } from '@/hooks/utils/userId';
 import { saveResult } from '@/services/burnoutHistory';
 
 const MAX_RETRIES = 3;
-// Cambia a false cuando tu API real esté enciendida nuevamente
-const USE_MOCK = true; 
+// Cambia a true para probar la app sin backend
+const USE_MOCK = false;
 
 const TestScreen = () => {
   const { responses } = useSurvey();
@@ -44,19 +44,24 @@ const TestScreen = () => {
       if (USE_MOCK) {
         // Simula el tiempo de respuesta de la red (2 segundos)
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        
+
         // Puedes alterar este valor para probar las diferentes vistas:
         // 0.20 -> Riesgo Bajo (Verde) | 0.45 -> Riesgo Moderado (Amarillo) | 0.75 -> Riesgo Alto (Rojo)
         data = {
-          probabilidad_burnout: 0.65,
-          factores: ['Carga laboral excesiva', 'Falta de descanso'],
+          burnout_probability: 0.65,
         };
       } else {
         const res = await axios.post(`${url}/predict`, payload, { timeout: 30000 });
         data = res.data;
       }
 
-      const prob = data.probabilidad_burnout * 100;
+      // Nuevo backend: { burnout_score, burnout_probability }.
+      // Se mantiene compatibilidad con la forma antigua (probabilidad_burnout).
+      const probability = data.burnout_probability ?? data.probabilidad_burnout;
+      if (typeof probability !== 'number') {
+        throw new Error('Respuesta inesperada del servidor');
+      }
+      const prob = probability * 100;
       await saveResult(prob, responses, data.factores ?? []);
 
       if (!mountedRef.current) return;

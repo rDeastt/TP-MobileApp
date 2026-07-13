@@ -29,13 +29,13 @@ const routine: Exercise[] = [
   {
     id: 'squat',
     name: 'Sentadillas lentas',
-    image: require('../../../../assets/avatars/sentadilla.png'),
+    image: require('../../../../assets/workout/sentadilla-glow.png'),
     cue: 'Siente el peso en tus talones y observa la tensión en los cuádriceps.',
   },
   {
     id: 'arm',
     name: 'Círculos de brazos',
-    image: require('../../../../assets/avatars/brazos-circulo.png'),
+    image: require('../../../../assets/workout/brazos-glow.png'),
     cue: 'Inhala al llevar los brazos arriba y exhala al bajarlos, notando los hombros.',
   },
 ];
@@ -166,8 +166,13 @@ const RoutineScreen = () => {
             <Text className="text-sm text-muted dark:text-muted-dark mb-4">
               Ejercicio {step.number}/{routine.length}
             </Text>
-            <ProgressRing progress={countdown.progress} size={220} strokeWidth={8}>
-              <Image source={step.exercise.image} className="w-44 h-44" resizeMode="contain" />
+            <ProgressRing progress={countdown.progress} size={230} strokeWidth={8}>
+              {/* Recorte circular: el glow oscuro de la ilustración queda como un orbe */}
+              <Image
+                source={step.exercise.image}
+                style={{ width: 198, height: 198, borderRadius: 99 }}
+                resizeMode="cover"
+              />
             </ProgressRing>
             <Text className="text-lg text-muted dark:text-muted-dark my-4">
               {countdown.secondsLeft}s

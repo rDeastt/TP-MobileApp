@@ -133,10 +133,31 @@ const PomodoroScreen = () => {
             ¿Cuántas repeticiones deseas hacer?
           </Text>
 
+          {/* Selección rápida */}
+          <View className="flex-row gap-3 mt-4 mb-2">
+            {[2, 3, 4].map((n) => (
+              <Text
+                key={n}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setRepsInput(String(n));
+                }}
+                className={`px-6 py-3 rounded-full overflow-hidden font-bold text-lg ${
+                  repsInput === String(n)
+                    ? 'bg-main text-white'
+                    : 'bg-card dark:bg-card-dark text-content dark:text-content-dark'
+                }`}
+              >
+                {n}
+              </Text>
+            ))}
+          </View>
+
           <ThemedTextInput
             className="w-32 h-14 text-center text-xl"
             keyboardType="numeric"
             maxLength={2}
+            placeholder="Otro"
             value={repsInput}
             onChangeText={(txt) => setRepsInput(txt.replace(/[^0-9]/g, ''))}
           />
